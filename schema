@@ -14,13 +14,15 @@ main() {
   join_conditions=""
 
   # Read the CSV file and process the data
-  while IFS=, read -r table_name column_name primary_key foreign_key referenced_table referenced_column
+  while IFS=, read -r table_name column_name referenced_table referenced_column
   do
-    # Append the table name to the list of tables
-    tables+=" $table_name"
+    # Append the table name to the list of tables if it's not already included
+    if [[ ! $tables =~ (^|[[:space:]])$table_name($|[[:space:]]) ]]; then
+      tables+=" $table_name"
+    fi
 
     # Append the join condition to the list of join conditions
-    join_conditions+=" JOIN $referenced_table ON $table_name.$foreign_key = $referenced_table.$referenced_column"
+    join_conditions+=" JOIN $referenced_table ON $table_name.$column_name = $referenced_table.$referenced_column"
 
     echo "Processed table: $table_name"
   done < your_csv_file.csv
