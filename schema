@@ -22,3 +22,64 @@ WHERE
     TABSCHEMA = 'YourSchema' -- Replace 'YourSchema' with the desired schema name
 ORDER BY
     TABNAME, COLNAME;
+
+WITH join_hierarchy AS (
+  SELECT
+    vm.view_name,
+    vm.table_name AS left_table,
+    vm.column_name AS left_column,
+    tm.table_name AS right_table,
+    tm.key_column_name AS right_column,
+    1 AS join_level
+  FROM
+    view_metadata vm
+    JOIN table_metadata tm ON vm.table_name = tm.table_name
+  WHERE
+    NOT EXISTS (
+      SELECT 1
+      FROM view_metadata vm2
+      JOIN table_metadata tm2 ON vm2.table_name = tm2.table_name
+      WHERE vm2.view_name = vm.view_name
+      AND (tm2.table_name <> tm.table_name OR tm2.column_name <> vm.column_name)
+    )
+  UNION ALL
+  SELECT
+    jh.view_name,
+    jh.left_table,
+    jh.left_column,
+    tm.table_name AS right_table,
+    tm.key_column_name AS right_column,
+    jh.join_level + 1
+  FROM
+    join_hierarchy jh
+    JOIN table_metadata tm ON jh.right_table = tm.table_name
+  WHERE
+    NOT EXISTS (
+      SELECT 1
+      FROM view_metadata vm2
+      JOIN table_metadata tm2 ON vm2.table_name = tm2.table_name
+      WHERE vm2.view_name = jh.view_name
+      AND (tm2.table_name <> tm.table_name OR tm2.column_name <> jh.left_column)
+    )
+),
+view_columns AS (
+  SELECT view_name, left_table, left_column
+  FROM join_hierarchy
+  WHERE join_level = (SELECT MIN(join_level) FROM join_hierarchy WHERE view_name = jh.view_name)
+),
+table_aliases AS (
+  SELECT DISTINCT left_table, ROW_NUMBER() OVER (PARTITION BY view_name ORDER BY left_table) AS alias_num
+  FROM join_hierarchy
+)
+SELECT 
+  'CREATE OR REPLACE VIEW ' || jh.view_name || ' AS ' ||
+  'SELECT ' || GROUP_CONCAT(DISTINCT 't' || ta.alias_num || '.' || vc.left_column || ' AS ' || vc.left_column ORDER BY vc.left_column SEPARATOR ', ') || ' ' ||
+  'FROM ' || GROUP_CONCAT(jh.left_table || ' t' || ta.alias_num ORDER BY ta.alias_num SEPARATOR ' JOIN ') || ' ' ||
+  'ON ' || GROUP_CONCAT('t' || (ta.alias_num - 1) || '.' || vc.left_column || ' = ' || 't' || ta.alias_num || '.' || jh.right_column ORDER BY ta.alias_num SEPARATOR ' AND ') || ';'
+FROM
+  join_hierarchy jh
+  JOIN view_columns vc ON jh.view_name = vc.view_name AND jh.left_table = vc.left_table
+  JOIN table_aliases ta ON jh.left_table = ta.left_table
+GROUP BY
+  jh.view_name;
+
