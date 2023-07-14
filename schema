@@ -16,17 +16,20 @@ main() {
   # Read the CSV file and process the data
   while IFS=, read -r table1 key_column table2 reference_column
   do
-    # Construct the join tables string
-    join_tables+=" $table1"
+    # Append table names to the list of join tables
+    join_tables+=" $table1 $table2"
 
     # Construct the join condition
-    join_conditions+=" INNER JOIN $table2 ON $table1.$key_column = $table2.$reference_column"
+    join_conditions+=" $table1.$key_column = $table2.$reference_column AND"
 
     echo "Processed tables: $table1, $table2"
   done < your_csv_file.csv
 
+  # Remove trailing "AND" from join conditions
+  join_conditions=${join_conditions%" AND"}
+
   # Generate the dynamic SQL query
-  query="SELECT * FROM $join_tables $join_conditions;"
+  query="SELECT * FROM $join_tables WHERE $join_conditions;"
 
   # Execute the query
   execute_query "$query"
