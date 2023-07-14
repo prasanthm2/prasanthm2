@@ -10,23 +10,45 @@ execute_query() {
 # Main script logic
 main() {
   # Variables to store accumulated data
-  join_tables=""
-  join_conditions=""
+  table_count=0
+  alias_prefix="t"
 
   # Read the CSV file and process the data
   while IFS=, read -r table_name column_name key_column referenced_table referenced_column
   do
+    table_count=$((table_count + 1))
+
+    # Generate table alias
+    table_alias="$alias_prefix$table_count"
+
     # Construct the join condition
-    join_conditions+="LEFT JOIN $referenced_table ON $table_name.$key_column = $referenced_table.$referenced_column
+    join_conditions+="LEFT JOIN $referenced_table AS $table_alias ON $table_alias.$key_column = $referenced_table.$referenced_column
 "
 
     echo "Processed table: $table_name"
   done < your_csv_file.csv
 
   # Generate the dynamic SQL query
-  query="SELECT *
-FROM table1
-$join_conditions;"
+  query="SELECT"
+
+  # Generate column references with table aliases
+  table_count=0
+  while IFS=, read -r table_name column_name key_column referenced_table referenced_column
+  do
+    table_count=$((table_count + 1))
+
+    # Generate table alias
+    table_alias="$alias_prefix$table_count"
+
+    # Add column reference with table alias
+    query+=" $table_alias.$column_name AS $table_name"_"$column_name,"
+  done < your_csv_file.csv
+
+  # Remove trailing comma from column references
+  query=${query%,}
+
+  query+=" FROM table1"
+  query+="$join_conditions;"
 
   # Execute the query
   execute_query "$query"
