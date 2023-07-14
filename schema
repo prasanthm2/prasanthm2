@@ -10,33 +10,28 @@ execute_query() {
 # Main script logic
 main() {
   # Variables to store accumulated data
-  tables=""
+  join_tables=""
   join_conditions=""
 
   # Read the CSV file and process the data
-  while IFS=, read -r table_name column_name referenced_table referenced_column
+  while IFS=, read -r table1 key_column table2 reference_column
   do
-    # Append the table name to the list of tables if it's not already included
-    if [[ ! $tables =~ (^|[[:space:]])$table_name($|[[:space:]]) ]]; then
-      tables+=" $table_name"
-    fi
+    # Construct the join tables string
+    join_tables+=" $table1"
 
-    # Append the join condition to the list of join conditions
-    join_conditions+=" JOIN $referenced_table ON $table_name.$column_name = $referenced_table.$referenced_column"
+    # Construct the join condition
+    join_conditions+=" INNER JOIN $table2 ON $table1.$key_column = $table2.$reference_column"
 
-    echo "Processed table: $table_name"
+    echo "Processed tables: $table1, $table2"
   done < your_csv_file.csv
 
-  # Generate the dynamic SQL query to create the view
-  view_query="CREATE OR REPLACE VIEW your_view_name AS
-              SELECT *
-              FROM $tables
-              $join_conditions;"
+  # Generate the dynamic SQL query
+  query="SELECT * FROM $join_tables $join_conditions;"
 
-  # Execute the view creation query
-  execute_query "$view_query"
+  # Execute the query
+  execute_query "$query"
 
-  echo "View your_view_name created"
+  echo "Query executed"
 }
 
 # Execute the main script
