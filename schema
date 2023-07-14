@@ -10,31 +10,23 @@ execute_query() {
 # Main script logic
 main() {
   # Variables to store accumulated data
-  main_table=""
   join_tables=""
   join_conditions=""
 
   # Read the CSV file and process the data
   while IFS=, read -r table_name column_name key_column referenced_table referenced_column
   do
-    if [ -z "$main_table" ]; then
-      main_table="$table_name"
-    else
-      # Check if the join condition already exists before adding it
-      if [[ ! $join_conditions =~ (^|[[:space:]])$table_name.$key_column[[:space:]]*=[[:space:]]*$referenced_table.$referenced_column($|[[:space:]]) ]]; then
-        join_tables+=" $table_name"
-        join_conditions+=" $table_name.$key_column = $referenced_table.$referenced_column AND"
-      fi
-    fi
+    # Construct the join condition
+    join_conditions+="LEFT JOIN $referenced_table ON $table_name.$key_column = $referenced_table.$referenced_column
+"
 
     echo "Processed table: $table_name"
   done < your_csv_file.csv
 
-  # Remove trailing "AND" from join conditions
-  join_conditions=${join_conditions%" AND"}
-
   # Generate the dynamic SQL query
-  query="SELECT * FROM $main_table $join_tables ON $join_conditions;"
+  query="SELECT *
+FROM table1
+$join_conditions;"
 
   # Execute the query
   execute_query "$query"
@@ -44,4 +36,3 @@ main() {
 
 # Execute the main script
 main
-
