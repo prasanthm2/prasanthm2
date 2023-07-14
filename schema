@@ -20,8 +20,11 @@ main() {
     if [ -z "$main_table" ]; then
       main_table="$table_name"
     else
-      join_tables+=" $table_name"
-      join_conditions+=" $table_name.$key_column = $referenced_table.$referenced_column AND"
+      # Check if the join condition already exists before adding it
+      if [[ ! $join_conditions =~ (^|[[:space:]])$table_name.$key_column[[:space:]]*=[[:space:]]*$referenced_table.$referenced_column($|[[:space:]]) ]]; then
+        join_tables+=" $table_name"
+        join_conditions+=" $table_name.$key_column = $referenced_table.$referenced_column AND"
+      fi
     fi
 
     echo "Processed table: $table_name"
