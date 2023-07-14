@@ -15,7 +15,7 @@ main() {
   main_table=""
 
   # Read the CSV file and process the data
-  while IFS=, read -r table_name column_name key_column referenced_table referenced_column
+  while IFS=, read -r table_name column_name key_column referenced_table referenced_column _
   do
     # Add the table to the list
     tables+=("$table_name")
