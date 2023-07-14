@@ -1,12 +1,5 @@
 #!/bin/bash
 
-# Function to execute a SQL query and store the result in a variable
-execute_query() {
-  local query="$1"
-  local result=$(db2 -x "$query")
-  echo "$result"
-}
-
 # Main script logic
 main() {
   # Variables to store accumulated data
@@ -27,12 +20,12 @@ main() {
     fi
 
     echo "Processed table: $table_name"
-  done < your_csv_file.csv
+  done < smp.csv
 
   # Determine the main table based on the table with the most columns
   max_columns=0
   for table in "${tables[@]}"; do
-    column_count=$(awk -F',' -v table="$table" '($1 == table){print NF}' your_csv_file.csv)
+    column_count=$(awk -F',' -v table="$table" '($1 == table){print NF}' smp.csv)
     if [[ $column_count -gt $max_columns ]]; then
       main_table="$table"
       max_columns=$column_count
@@ -50,10 +43,14 @@ main() {
   # Remove trailing comma from column references
   query=${query%,}
 
-  query+=" FROM $main_table$join_conditions;"
+  query+=" FROM $main_table"
 
-  # Execute the query
-  execute_query "$query"
+  # Add the join conditions if available
+  if [[ ! -z "$join_conditions" ]]; then
+    query+="$join_conditions"
+  fi
+
+  echo "$query"
 
   echo "Query executed"
 }
