@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Function to execute a SQL query and store the result in a variable
+execute_query() {
+  local query="$1"
+  local result=$(db2 -x "$query")
+  echo "$result"
+}
+
 # Main script logic
 main() {
   # Variables to store accumulated data
@@ -37,7 +44,8 @@ main() {
 
   # Generate column references with table aliases
   for table in "${tables[@]}"; do
-    query+=" $table.*,"
+    table_alias=$(echo "$table" | sed 's/[^[:alnum:]]/_/g')
+    query+=" $table_alias.*,"
   done
 
   # Remove trailing comma from column references
@@ -57,4 +65,3 @@ main() {
 
 # Execute the main script
 main
- 
