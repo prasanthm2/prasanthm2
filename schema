@@ -21,7 +21,7 @@ main() {
     tables+=("$table_name")
 
     # Construct the join condition
-    if [[ ${#tables[@]} -gt 1 ]]; then
+    if (( ${#tables[@]} > 1 )); then
       prev_table="${tables[$((${#tables[@]} - 2))]}"
       join_conditions+=" LEFT JOIN $table_name ON $prev_table.$key_column = $table_name.$referenced_column"
     fi
@@ -33,7 +33,7 @@ main() {
   max_columns=0
   for table in "${tables[@]}"; do
     column_count=$(awk -F',' -v table="$table" '($1 == table){print NF}' smp.csv)
-    if [[ $column_count -gt $max_columns ]]; then
+    if (( column_count > max_columns )); then
       main_table="$table"
       max_columns=$column_count
     fi
