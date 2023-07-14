@@ -55,7 +55,7 @@ main() {
 
   # Add the join conditions if available
   if [[ ! -z "$join_conditions" ]]; then
-    query+="$join_conditions"
+    query+=" $join_conditions"
   fi
 
   echo "$query"
