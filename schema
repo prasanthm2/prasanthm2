@@ -10,45 +10,47 @@ execute_query() {
 # Main script logic
 main() {
   # Variables to store accumulated data
-  table_count=0
-  alias_prefix="t"
+  tables=()
+  join_conditions=""
 
   # Read the CSV file and process the data
   while IFS=, read -r table_name column_name key_column referenced_table referenced_column
   do
-    table_count=$((table_count + 1))
-
-    # Generate table alias
-    table_alias="$alias_prefix$table_count"
+    # Add the table to the list
+    tables+=("$table_name")
 
     # Construct the join condition
-    join_conditions+="LEFT JOIN $referenced_table AS $table_alias ON $table_alias.$key_column = $referenced_table.$referenced_column
-"
+    if [[ ${#tables[@]} -gt 1 ]]; then
+      prev_table="${tables[$((${#tables[@]} - 2))]}"
+      join_conditions+=" LEFT JOIN $table_name ON $prev_table.$key_column = $table_name.$referenced_column"
+    fi
 
     echo "Processed table: $table_name"
   done < your_csv_file.csv
+
+  # Determine the main table based on the table with the most columns
+  main_table=""
+  max_columns=0
+  for table in "${tables[@]}"; do
+    column_count=$(awk -F',' -v table="$table" '($1 == table){print NF}' your_csv_file.csv)
+    if [[ $column_count -gt $max_columns ]]; then
+      main_table="$table"
+      max_columns=$column_count
+    fi
+  done
 
   # Generate the dynamic SQL query
   query="SELECT"
 
   # Generate column references with table aliases
-  table_count=0
-  while IFS=, read -r table_name column_name key_column referenced_table referenced_column
-  do
-    table_count=$((table_count + 1))
-
-    # Generate table alias
-    table_alias="$alias_prefix$table_count"
-
-    # Add column reference with table alias
-    query+=" $table_alias.$column_name AS $table_name"_"$column_name,"
-  done < your_csv_file.csv
+  for table in "${tables[@]}"; do
+    query+=" $table.*,"
+  done
 
   # Remove trailing comma from column references
   query=${query%,}
 
-  query+=" FROM table1"
-  query+="$join_conditions;"
+  query+=" FROM $main_table$join_conditions;"
 
   # Execute the query
   execute_query "$query"
