@@ -9,32 +9,21 @@ execute_query() {
 
 # Main script logic
 main() {
-  # Variables to store accumulated data
-  join_tables=""
-  join_conditions=""
-
   # Read the CSV file and process the data
   while IFS=, read -r table1 key_column table2 reference_column
   do
-    # Append table names to the list of join tables
-    join_tables+=" $table1 $table2"
+    echo "Joining $table2 on $table1.$key_column = $table2.$reference_column"
+    
+    # Generate the dynamic SQL query to create the view
+    join_query="JOIN $table2 ON $table1.$key_column = $table2.$reference_column"
 
-    # Construct the join condition
-    join_conditions+=" $table1.$key_column = $table2.$reference_column AND"
+    # Execute the join query
+    execute_query "$join_query"
 
-    echo "Processed tables: $table1, $table2"
+    echo "Join executed"
+    echo "---"
+
   done < your_csv_file.csv
-
-  # Remove trailing "AND" from join conditions
-  join_conditions=${join_conditions%" AND"}
-
-  # Generate the dynamic SQL query
-  query="SELECT * FROM $join_tables WHERE $join_conditions;"
-
-  # Execute the query
-  execute_query "$query"
-
-  echo "Query executed"
 }
 
 # Execute the main script
