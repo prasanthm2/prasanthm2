@@ -62,5 +62,5 @@ RT__ENTITY_MS_ASSOCTYPE is joined with any tables which has MS_ASSOCTYPE_ID colu
 RT__ENTITY_MS_ASSOCTYPE is joined with RT_ENTITY on the condition of ENTITY_ID.
 RT_MS_ISSUE is joined with RT_EMPLOYEE on the condition of CREATOR with EMPLOYEE_ID.
 
-The number of rows in resultant of queries should be same as RT_MS_ISSUE , which means other tables in joins can have more than one rows so please concatenate any values from other tables to single row 
+The number of rows in resultant of queries should be same as RT_MS_ISSUE , which means other tables in joins can have more than one rows so please concatenate values from other tables to single row 
 
