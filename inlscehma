@@ -1,0 +1,28 @@
+SCHEMANAME , TABLENAME , COLUMNNAME, DATATYPE, ISPRIMARYKEY, REFERENCEDSCHEMA, REFERENCEDTABLE, REFERENCEDCOLUMN, REMARKS
+DCRGTIOP,RT_ENTITY,BE_GEOLOCID, VARCHAR,not ,,,,The unique_IDentifier for the Geo Location
+DCRGTIOP,RT_ENTITY,BE_LEGLCODE, VARCHAR,not ,,,,This is the Legal Entity GL Code pulled from LEXI
+DCRGTIOP,RT_MS_ISSUE, CREATOR, DECFLOAT,not ,,,,Resource Creator
+DCRGTIOP,RT_MS_ISSUE,CRRNTDDT, TIMESTAMP,not ,,,,The latest Current Due Date of the Action Plan(s) associated to the Issue. Current Due Date is the date the Action Plan is to be promoted to Pending Verification if Closure Verification is required or Closed if Closure Verification is not required.
+DCRGTIOP,RT_EMPLOYEE, EMP_MSFWID, VARCHAR, not ,,,,
+DCRGTIOP,RT_ENTITY,ENTITY_ID,DECFLOAT,,,,,Resource_ID
+DCRGTIOP,RT__ENTITY_MS_ASSOCTYPE,ENTITY_ID, DECFLOAT, , DCRGTIOP,RT_ENTITY,ENTITY_ID,Resource_ID
+DCRGTIOP,RT_ENTITY MS_ASSOCTYPE, ENTITY_ID,DECFLOAT,,,,,Resource_ID
+DCRGTIOP,ENUMVALS, ENUMVALID, DECIMAL,,,,,Enumerated value_ID PK: based on ENUMVALIDSEQ.
+DCRGTIOP,RT_MS_ISSUE, ISSDESCR, VARCHAR, not ,,,,The text providing further detail on the scope or objective of an Issue.
+DCRGTIOP,RT_MS_ACTIONPLAN,MS_ACTIONPLAN_ID,DECFLOAT,,,,,Resource_ID
+DCRGTIOP,RT_MS_ASSOCTYPE,MS_ASSOCTYPE_ID,DECFLOAT,,,,,Resource_ID
+DCRGTIOP,RT__ENTITY_MS_ASSOCTYPE,MS_ASSOCTYPE_ID,DECFLOAT,not ,DCRGTIOP,RT_MS_ASSOCTYPE,MS_ASSOCTYPE_ID,Resource_ID
+DCRGTIOP,RT_ENTITY MS_ASSOCTYPE,MS_ASSOCTYPE_ID,DECFLOAT,not ,,,,Resource_ID
+DCRGTIOP,RT__MS_ISSUE_MS_ASSOCTYPE,MS_ASSOCTYPE_ID,DECFLOAT,not ,DCRGTIOP,RT_MS_ASSOCTYPE,MS_ASSOCTYPE_ID,Resource_ID
+DCRGTIOP,RT__MS_ISSUE_MS_ASSOCTYPE,MS_ASSOCTYPE_ID,DECFLOAT,not ,,,,Resource_ID
+DCRGTIOP,RT_MS_ISSUE,MS_ISSUE_ID,DECFLOAT,,,,,Resource_ID
+DCRGTIOP,RT_MS_ISSUE MS_ASSOCTYPE,MS_ISSUE_ID, DECFLOAT, ,DCRGTIOP,RT_MS_ISSUE,MS_ISSUE_ID,Resource_ID
+DCRGTIOP,RT_MS_ISSUE_MS_ASSOCTYPE,MS_ISSUE_ID,DECFLOAT,,,,,Resource_ID
+DCRGTIOP,ENUMVALS, NAME, VARCHAR, not ,,,,Enumerated value name unique within a given enumerated type.
+DCRGTIOP,RT_MS_ACTIONPLAN, NAMEO0, VARCHAR,not ,,,,Resource Name
+DCRGTIOP,RT_MS_ASSOCTYPE, NAME00,VARCHAR,not ,,,,Resource Name
+DCRGTIOP,RT_MS_ISSUE, STTS,DECFLOAT,not ,DCRGTIOP,ENUMVALS, ENUMVALID,The status of an issue relative to the work being done to satisfy the Issue.
+DCRGTIOP,RT_MS_ISSUE, TTL, VARCHAR,not ,,,,The high level description of the Issue.
+RT_MS_ISSUE is the major table in this schema.
+Sometimes RT_ENTITY,RT_MS_ACTIONPLAN can have mulitple rows so pl concatenate any values to single row from this table.
+The number of rows in resultant of queries should be same as RT_MS_ISSUE , which mean all other tables joined can have more than one rows so pl concatenate any values to single row
