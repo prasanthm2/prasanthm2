@@ -1,5 +1,3 @@
-I will give you database details can you create view on top of it. 
-
 Table: RT_ENTITY
 
 Columns: BE_GEOLOCID (VARCHAR), BE_LEGLCODE (VARCHAR), ENTITY_ID (DECFLOAT)
@@ -62,5 +60,7 @@ RT__MS_ISSUE_MS_ASSOCTYPE is joined with RT_MS_ASSOCTYPE on the condition of MS_
 RT__MS_ISSUE_MS_ASSOCTYPE is also joined with RT_MS_ISSUE on the condition of MS_ISSUE_ID.
 RT__ENTITY_MS_ASSOCTYPE is joined with any tables which has MS_ASSOCTYPE_ID columns.
 RT__ENTITY_MS_ASSOCTYPE is joined with RT_ENTITY on the condition of ENTITY_ID.
-RT_MS_ISSUE can joined with RT_EMPLOYEE on the condition of EMPLOYEE_ID with CREATOR.
+RT_MS_ISSUE is joined with RT_EMPLOYEE on the condition of CREATOR with EMPLOYEE_ID.
+
+The number of rows in resultant of queries should be same as RT_MS_ISSUE , which means other tables in joins can have more than one rows so please concatenate any values from other tables to single row 
 
