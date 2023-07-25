@@ -9,6 +9,25 @@ Table: RT_MS_ISSUE
 Columns: CREATOR (DECFLOAT), CRRNTDDT (TIMESTAMP), ISSDESCR (VARCHAR), MS_ISSUE_ID (DECFLOAT), STTS (DECFLOAT), TTL (VARCHAR)
 Primary Key: None
 Remarks: The table represents issues and includes various details such as the resource creator (CREATOR), the latest Current Due Date of associated Action Plan(s) (CRRNTDDT), further description on the scope or objective of an issue (ISSDESCR), Resource ID for the issue (MS_ISSUE_ID), status of the issue (STTS), and high-level description of the issue (TTL).
+Other Columns : OTHRCMMTTEE (VARCHAR): Other Committee
+PRCTXNMY (VARCHAR): PRC Taxonomy
+PRC_VIEWER (VARCHAR): PRC Viewer
+PRINT_VERSION (VARCHAR): Print Version
+PRPSDOWNER (VARCHAR): Proposed Owner
+PWYTKNOMY (DECFLOAT): Pathway Taxonomy (Join with ENUMVALS table)
+REGISS_REOP_DT (TIMESTAMP): Reopen Date
+RSDLRSKLVL (DECFLOAT): Residual Risk Level (Join with ENUMVALS table)
+RSKRTNGCD (VARCHAR): Risk Rating
+RTCSESBTYP (DECFLOAT): Root Cause Sub-Type (Join with ENUMVALS table)
+RTCSETHEME (DECFLOAT): Root Cause Theme (Join with ENUMVALS table)
+RTCSETYP (DECFLOAT): Root Cause Type (Join with ENUMVALS table)
+RULECATTYPE (VARCHAR): Rule Category Type
+SLADUEDATE (TIMESTAMP): SLA Due Date
+SUPPLHLPR (VARCHAR): Supplier Helper
+TAPPLCTN (VARCHAR): TAI Application
+VERSION_COMMENTS (VARCHAR): Version Comments
+WMSUBCOUNCIL (DECFLOAT): WM Sub-council
+
 
 Table: RT_EMPLOYEE
 
