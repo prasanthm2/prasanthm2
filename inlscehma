@@ -1,28 +1,55 @@
-SCHEMANAME , TABLENAME , COLUMNNAME, DATATYPE, ISPRIMARYKEY, REFERENCEDSCHEMA, REFERENCEDTABLE, REFERENCEDCOLUMN, REMARKS
-DCRGTIOP,RT_ENTITY,BE_GEOLOCID, VARCHAR,not ,,,,The unique_IDentifier for the Geo Location
-DCRGTIOP,RT_ENTITY,BE_LEGLCODE, VARCHAR,not ,,,,This is the Legal Entity GL Code pulled from LEXI
-DCRGTIOP,RT_MS_ISSUE, CREATOR, DECFLOAT,not ,,,,Resource Creator
-DCRGTIOP,RT_MS_ISSUE,CRRNTDDT, TIMESTAMP,not ,,,,The latest Current Due Date of the Action Plan(s) associated to the Issue. Current Due Date is the date the Action Plan is to be promoted to Pending Verification if Closure Verification is required or Closed if Closure Verification is not required.
-DCRGTIOP,RT_EMPLOYEE, EMP_MSFWID, VARCHAR, not ,,,,
-DCRGTIOP,RT_ENTITY,ENTITY_ID,DECFLOAT,,,,,Resource_ID
-DCRGTIOP,RT__ENTITY_MS_ASSOCTYPE,ENTITY_ID, DECFLOAT, , DCRGTIOP,RT_ENTITY,ENTITY_ID,Resource_ID
-DCRGTIOP,RT_ENTITY MS_ASSOCTYPE, ENTITY_ID,DECFLOAT,,,,,Resource_ID
-DCRGTIOP,ENUMVALS, ENUMVALID, DECIMAL,,,,,Enumerated value_ID PK: based on ENUMVALIDSEQ.
-DCRGTIOP,RT_MS_ISSUE, ISSDESCR, VARCHAR, not ,,,,The text providing further detail on the scope or objective of an Issue.
-DCRGTIOP,RT_MS_ACTIONPLAN,MS_ACTIONPLAN_ID,DECFLOAT,,,,,Resource_ID
-DCRGTIOP,RT_MS_ASSOCTYPE,MS_ASSOCTYPE_ID,DECFLOAT,,,,,Resource_ID
-DCRGTIOP,RT__ENTITY_MS_ASSOCTYPE,MS_ASSOCTYPE_ID,DECFLOAT,not ,DCRGTIOP,RT_MS_ASSOCTYPE,MS_ASSOCTYPE_ID,Resource_ID
-DCRGTIOP,RT_ENTITY MS_ASSOCTYPE,MS_ASSOCTYPE_ID,DECFLOAT,not ,,,,Resource_ID
-DCRGTIOP,RT__MS_ISSUE_MS_ASSOCTYPE,MS_ASSOCTYPE_ID,DECFLOAT,not ,DCRGTIOP,RT_MS_ASSOCTYPE,MS_ASSOCTYPE_ID,Resource_ID
-DCRGTIOP,RT__MS_ISSUE_MS_ASSOCTYPE,MS_ASSOCTYPE_ID,DECFLOAT,not ,,,,Resource_ID
-DCRGTIOP,RT_MS_ISSUE,MS_ISSUE_ID,DECFLOAT,,,,,Resource_ID
-DCRGTIOP,RT_MS_ISSUE MS_ASSOCTYPE,MS_ISSUE_ID, DECFLOAT, ,DCRGTIOP,RT_MS_ISSUE,MS_ISSUE_ID,Resource_ID
-DCRGTIOP,RT_MS_ISSUE_MS_ASSOCTYPE,MS_ISSUE_ID,DECFLOAT,,,,,Resource_ID
-DCRGTIOP,ENUMVALS, NAME, VARCHAR, not ,,,,Enumerated value name unique within a given enumerated type.
-DCRGTIOP,RT_MS_ACTIONPLAN, NAMEO0, VARCHAR,not ,,,,Resource Name
-DCRGTIOP,RT_MS_ASSOCTYPE, NAME00,VARCHAR,not ,,,,Resource Name
-DCRGTIOP,RT_MS_ISSUE, STTS,DECFLOAT,not ,DCRGTIOP,ENUMVALS, ENUMVALID,The status of an issue relative to the work being done to satisfy the Issue.
-DCRGTIOP,RT_MS_ISSUE, TTL, VARCHAR,not ,,,,The high level description of the Issue.
-RT_MS_ISSUE is the major table in this schema.
-Sometimes RT_ENTITY,RT_MS_ACTIONPLAN can have mulitple rows so pl concatenate any values to single row from this table.
-The number of rows in resultant of queries should be same as RT_MS_ISSUE , which mean all other tables joined can have more than one rows so pl concatenate any values to single row
+Dashboard Overview:
+
+Display key metrics and statistics about the system dictionary, such as the total number of projects, databases, data quality indicators, etc.
+Use charts and graphs to visually represent metadata distribution and coverage across different sources and types.
+Provide quick links to other important screens and sections of the application.
+Metadata Search and Browse:
+
+Implement a search bar to allow users to search for specific metadata elements using keywords or filters.
+Display search results in a table or list format, showing essential metadata details like table names, column names, etc.
+Enable browsing of metadata hierarchies through expandable/collapsible tree views or breadcrumb navigation.
+Data Quality Monitoring:
+
+Show data quality scores and indicators with color-coded visual cues for quick assessment.
+Provide the ability to drill down into specific data quality issues and view detailed reports.
+Allow users to set thresholds and receive alerts when data quality falls below acceptable levels.
+Data Lineage Visualization:
+
+Display data lineage as a visual flowchart or directed graph, showing data flow and transformations.
+Provide options to filter and focus on specific data elements or workflows.
+Allow users to click on nodes to view detailed lineage information and metadata properties.
+Metadata Change History:
+
+Show a timeline or log of metadata changes, highlighting the most recent updates.
+Enable users to compare different versions of metadata elements.
+Implement a version control system to manage metadata changes.
+Data Access and Permissions:
+
+Design an interface to manage user roles and permissions for accessing and editing metadata.
+Provide clear visibility into who has access to what data elements.
+Allow administrators to set role-based access controls.
+Data Dictionary Glossary:
+
+Organize technical terms and business definitions in an alphabetically sorted glossary.
+Provide search and filtering options for users to find specific terms quickly.
+Allow users to click on terms to view detailed definitions and related metadata.
+Alerts and Notifications:
+
+Create a notification center to manage alerts and notifications.
+Allow users to subscribe to specific events or data quality triggers.
+Provide options to customize notification preferences.
+Data Compliance and Regulatory Reports:
+
+Design a reporting interface to generate compliance reports.
+Include data governance statistics and evidence of adherence to regulations.
+Allow exporting reports in various formats (e.g., PDF, CSV).
+Data Usage Analytics:
+
+Create visualizations and charts to represent data usage patterns and access frequencies.
+Enable filtering and grouping options for data analysis.
+Show most accessed or popular data elements.
+Data Impact Analysis:
+
+Design an interactive impact analysis tool to visualize dependencies between metadata elements.
+Enable users to explore how changes to one element can affect others.
+Provide a summary of the impact and potential risks.
