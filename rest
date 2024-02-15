@@ -1,0 +1,52 @@
+Data Onboarding Initiative: Departmental Request
+
+Initiation of Data Request: The respective departmental units will initiate a formal data requisition through inter-departmental communication channels. This protocol assists in projecting the workload for upcoming development sprints.
+Request Submission Protocol: The data requisition will be communicated via electronic mail or through the designated communication portal.
+Prospective UI Integration: Future enhancements may include the development of a web-based user interface, leveraging the centralized metadata repository to streamline the onboarding requisition process.
+Onboarding Documentation: Business Compliance and Technical Specifications
+
+Business Requirement Documentation: Departments are required to complete onboarding documentation, detailing all pertinent business-level information for approval. This includes:
+A comprehensive business rationale for the data feed, inclusive of concept definitions at the resource level.
+Critical source system details, such as Global Resource Number (GRN) and other relevant identifiers.
+Additional specifications encompassing:
+Frequency and scheduling of data loads (days and times specified).
+Data load methodology (incremental vs. full load considerations).
+Historical data requirements (Yes/No) and the extent of historical data needed.
+Data retention policies for the target system.
+Technical Mapping Documentation: Data Integration and Governance
+
+Technical Mapping Requisites: The technology team is tasked with the completion of technical mapping documents essential for the integration of the onboarding data.
+Mapping Document Details: This document shall encapsulate:
+Locations of source databases/files/APIs/tables/views and their corresponding attributes.
+A thorough description of each data element, including personally identifiable information (PII) considerations.
+Utility of Mapping Documentation: These documents serve as a foundation for the subsequent development and cataloging phases, ensuring data governance and integrity.
+
+Data Development and Cataloging
+
+Onboarding Documentation Completion: After onboarding forms are finalized, details are logged in the Jira board for sprint planning.
+Process Development: Developers utilize the mapping document to construct the data process.
+Quality Assurance and Migration: Post-unit testing, developers are tasked with cataloging all pertinent details into the metadata inventory UI ahead of migration to production environments.
+Metadata Inventory: Technical metadata for the platform is auto-extracted; manual input is required for additional specifics.
+Metadata Includes:
+Source Platform Identifiers (e.g., GRN, EONID)
+API, file, table, and view details
+Target system data elements, process jobs, and integration steps
+Comprehensive listings from staging to final data structures
+
+
+
+Data Team Onboarding and Cataloging Enhancements
+
+Cataloging Interface Development: An advanced WebUI will be developed on the Sysdict portal, integrating with the metadata inventory database to streamline cataloging activities.
+Metadata Inventory Integration: The existing metadata inventory already encompasses comprehensive technical details of onboarded platforms. The new WebUI will augment this by incorporating additional information, automating data derivation wherever possible.
+Key Information Components:
+
+Databases: Details about databases and their properties.
+Resources: Information about tables, views, and attributes.
+Permissions: Access controls and grants at the resource level.
+Indexing: Index attributes and statistics for resources.
+Storage Metrics: Space usage and row count analytics.
+Data Retention: Policy details at the table level for data purging.
+Data Lineage Tools: Information flow tracing from Informatica and Talend at the resource and data element levels, and CDL integration specifics.
+Job Scheduling: Existing Autosys job details with the necessity to extract Airflow job configurations.
+LDAP & Proid Management: LDAP group configurations and member details, along with Proid specifications.
