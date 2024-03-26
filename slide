@@ -13,17 +13,20 @@ Innovative Approaches: Semantic graphs for clearer data lineage and relationship
 Business Support: Proof of concept with Metaphacts shows promising visualization capabilities.
 
 
-Slide 4: Current Capabilities and Tools
-SysDict Highlights
-Automated Collection: Seamlessly gathers DB2 and HDFS metadata (tables, columns, views, indexes).
-Intuitive UI: Dynamic web interface for efficient metadata browsing and management, with a roadmap for additional functionalities.
-Manual Entry Support: Facilitates comprehensive metadata capture by allowing manual inputs where automation isn't feasible.
-LCGDataCatalog Features
-Dataset Management: Empowers business users to create and manage descriptive datasets, linking them to physical data sources.
-Stardog Integration: Leverages Stardog for storing and visualizing dataset information in semantic graph formats, enhancing data insight.
-Advanced Visualization with Stardog
-Semantic Graphs: Transforms complex metadata relationships into understandable visual formats, improving data analysis.
-Proof of Concept: Demonstrated potential with Metaphacts for deeper metadata insights, driving business interest and support.
+Slide 5: Ongoing Initiatives
+SysDict Enhancements
+Resource Entitlements & Dependencies: Adding entitlements and dependency tracking to resources like tables, views, and APIs for richer metadata context.
+Manual Metadata Entry Interfaces
+Completing the Metadata Picture: Developing screens for manual metadata entry, ensuring no detail is overlooked.
+Data Cataloging Projects
+Etrade and MSSB Initiatives: Collaborating with upstream teams for meticulous cataloging, pivotal for data governance.
+Stardog Metadata Integration
+RBMS to Stardog: Advancing from POC to full implementation, enhancing metadata analysis and visibility through Stardog.
+Visualization with Metaphacts
+Enhancing Insight with Metaphacts: Exploring Metaphacts to leverage Stardog data for superior semantic graph visualizations, aiming for intuitive understanding of complex metadata relationships.
+Process Improvement Tasks
+Data Management Hygiene: Executing on process meta migration and ProID segregation to streamline and secure metadata processes.
+
 
 Stardog Integration
 Broaden Integration: Push all metadata into Stardog for advanced graph visualizations.
