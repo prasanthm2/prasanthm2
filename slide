@@ -24,3 +24,16 @@ Stardog Integration: Leverages Stardog for storing and visualizing dataset infor
 Advanced Visualization with Stardog
 Semantic Graphs: Transforms complex metadata relationships into understandable visual formats, improving data analysis.
 Proof of Concept: Demonstrated potential with Metaphacts for deeper metadata insights, driving business interest and support.
+
+Stardog Integration
+Broaden Integration: Push all metadata into Stardog for advanced graph visualizations.
+SysDict & LCGDataCatalog Enhancements
+Add Entitlements: Introduce entitlement controls for improved data access security.
+SysDict Evolution: Enhance screens with lineage metadata and more detailed information.
+LCGDataCatalog Advancements: Improve dataset management and interface for ease of use.
+Lineage and Quality Integration
+Capture Lineage Metadata: Extend collection efforts to CDL jobs and Talend.
+Embed Data Quality Metrics: Integrate with quality tools for reliable metadata.
+Process and Platform Automation
+Automate Process Metadata: Shift job information sourcing to automated systems.
+Automate Platform Data Extraction: Develop processes to minimize manual work.
