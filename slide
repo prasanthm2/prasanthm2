@@ -85,7 +85,8 @@ Introduce a peer-feedback initiative to encourage open and respectful communicat
 
 
 
-Configure the Event Listener to collect the required information, including lineage details.
+Leverage the Event Listener feature provided by Spark to configure the Event Listener to collect the required information, including lineage details.
+Configure the Event Listener to collect additional information required for lineage analysis.
 Connect to the Event Listener and retrieve the logs containing lineage information.
 Utilize log readers such as Fluentbit to extract and transform the data from the logs into a tabular format.
 Load the transformed information into the target database for further analysis and usage.
