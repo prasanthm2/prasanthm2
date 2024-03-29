@@ -82,3 +82,16 @@ Conduct quarterly reviews to recognize achievements and reinforce expectations.
 Recognize a team member monthly for outstanding contribution to team values.
 Organize quarterly diversity and inclusion activities to foster team unity.
 Introduce a peer-feedback initiative to encourage open and respectful communication.
+
+
+
+Configure the Event Listener to collect the required information, including lineage details.
+Connect to the Event Listener and retrieve the logs containing lineage information.
+Utilize log readers such as Fluentbit to extract and transform the data from the logs into a tabular format.
+Load the transformed information into the target database for further analysis and usage.
+
+Understand that Talend has a feature to export lineage information in the form of mapping files, which can be in various formats such as XML, HTML, or JSON.
+Develop a script or process to parse sample HTML files to extract the source and target mapping information.
+Implement a mechanism to load the extracted mapping information from the sample files into the desired tables or repositories.
+Validate the automation by demonstrating successful extraction and loading of mapping information from the sample files.
+Once the process is proven successful with sample files, communicate the requirement to teams to include their mapping files along with their jar files in Git repositories where code is maintained.
