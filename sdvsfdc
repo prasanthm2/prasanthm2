@@ -34,3 +34,25 @@ Automation vs. Manual Processes: Collibra FDC relies heavily on manual processes
 Real-Time Data Management: SystemDictionary provides active metadata management, capturing changes as they occur, which is essential for environments with frequent data updates. FDC’s approach may result in less frequent updates and a static data state that does not reflect the most current data landscape.
 User Engagement and Flexibility: SystemDictionary's UI enables users to manually enter and link datasets when necessary, complementing the automated processes. This allows users direct control over their metadata and the flexibility to adjust and refine metadata entries in real-time. Collibra’s approach, while structured and possibly more user-friendly due to its commercial nature, may not offer the same level of direct user control or flexibility.
 Technological Integration: SystemDictionary integrates with technologies like Stardog to create knowledge graphs, enhancing data visualization and understanding through semantic relationships. This capability is crucial for advanced data analytics and governance, providing a dynamic and interconnected view of data lineage and dependencies. It's not clear if Collibra FDC integrates similar technologies for real-time knowledge graph generation.
+
+
+
+Certainly! Here's a consolidated view of the differences between your SystemDictionary project and Collibra's Firmwide Data Catalog (FDC), emphasizing the unique aspects of each system:
+
+Automation vs. Manual Processes:
+SystemDictionary: Utilizes automated ETL jobs to continuously update metadata daily, ensuring data relevance and minimizing human error. Allows for manual entry of metadata where automation is not feasible.
+Collibra FDC: Relies on manual processes where system owners upload important dataset metadata via a managed process. This can lead to delays or outdated information.
+Metadata Scope and Collection:
+SystemDictionary: Collects comprehensive metadata for all data entities, not limited to critical datasets, ensuring a more complete metadata landscape.
+Collibra FDC: Focuses on prioritized data items (PDIs), primarily collecting metadata for datasets deemed important by organizational policies.
+User Interface and Interactivity:
+SystemDictionary: Offers a functional user interface that facilitates direct user interaction for metadata management, including linking datasets to physical tables.
+Collibra FDC: Provides a polished user interface with extensive features, likely more user-friendly, but may not offer the same level of direct control as SystemDictionary.
+Standard Compliance and Knowledge Graphs:
+SystemDictionary: Uses the DCAT model for creating knowledge graphs, aligning metadata management with a globally recognized standard for data interoperability.
+Collibra FDC: It's unclear if FDC uses a recognized standard like DCAT for knowledge graphs, which might affect its interoperability outside its proprietary environment.
+Integration and Flexibility:
+SystemDictionary: Designed around specific internal systems and processes, providing focused and streamlined integration optimized for organizational technologies.
+Collibra FDC: Supports a wide range of integrations due to its commercial nature, which may offer broader but less customized integration capabilities.
+Search and Discovery Features:
+Both SystemDictionary and Collibra FDC offer robust search functionalities within their UIs, allowing users to easily access and manage metadata.
