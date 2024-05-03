@@ -3,3 +3,22 @@ SELECT
            LOCATE(' ', cmd_tx, LOCATE('--zk_conf_path ', cmd_tx) + LENGTH('--zk_conf_path ')) - 
            LOCATE('--zk_conf_path ', cmd_tx) - LENGTH('--zk_conf_path ')) AS path
 FROM DICT.T_PROCESS;
+
+
+SELECT 
+    CASE 
+        WHEN LOCATE('--zk_conf_path ', cmd_tx) > 0 THEN 
+            SUBSTR(
+                cmd_tx, 
+                LOCATE('--zk_conf_path ', cmd_tx) + LENGTH('--zk_conf_path '), 
+                NULLIF(
+                    LOCATE(' ', cmd_tx, LOCATE('--zk_conf_path ', cmd_tx) + LENGTH('--zk_conf_path ')), 
+                    0
+                ) - LOCATE('--zk_conf_path ', cmd_tx) - LENGTH('--zk_conf_path ')
+            )
+        ELSE NULL 
+    END AS path
+FROM 
+    DICT.T_PROCESS
+WHERE 
+    LOCATE('--zk_conf_path ', cmd_tx) > 0;
