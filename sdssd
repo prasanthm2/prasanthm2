@@ -11,10 +11,13 @@ SELECT
             SUBSTR(
                 cmd_tx, 
                 LOCATE('--zk_conf_path ', cmd_tx) + LENGTH('--zk_conf_path '), 
-                NULLIF(
-                    LOCATE(' ', cmd_tx, LOCATE('--zk_conf_path ', cmd_tx) + LENGTH('--zk_conf_path ')), 
-                    0
-                ) - LOCATE('--zk_conf_path ', cmd_tx) - LENGTH('--zk_conf_path ')
+                CASE 
+                    WHEN LOCATE(' ', cmd_tx, LOCATE('--zk_conf_path ', cmd_tx) + LENGTH('--zk_conf_path ')) > 0 THEN
+                        LOCATE(' ', cmd_tx, LOCATE('--zk_conf_path ', cmd_tx) + LENGTH('--zk_conf_path ')) - 
+                        LOCATE('--zk_conf_path ', cmd_tx) - LENGTH('--zk_conf_path ')
+                    ELSE
+                        LENGTH(cmd_tx) - LOCATE('--zk_conf_path ', cmd_tx) - LENGTH('--zk_conf_path ') + 1
+                END
             )
         ELSE NULL 
     END AS path
