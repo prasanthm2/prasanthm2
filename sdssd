@@ -1,0 +1,5 @@
+SELECT 
+    SUBSTR(cmd_tx, LOCATE('--zk_conf_path ', cmd_tx) + LENGTH('--zk_conf_path '), 
+           LOCATE(' ', cmd_tx, LOCATE('--zk_conf_path ', cmd_tx) + LENGTH('--zk_conf_path ')) - 
+           LOCATE('--zk_conf_path ', cmd_tx) - LENGTH('--zk_conf_path ')) AS path
+FROM DICT.T_PROCESS;
