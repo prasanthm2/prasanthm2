@@ -1,0 +1,37 @@
+WITH RECURSIVE ReplaceCTE AS (
+    SELECT 
+        p.process_id,
+        p.CMD_TX AS original_command,
+        p.CMD_TX AS command_string,
+        1 AS cycle
+    FROM 
+        DICT.T_PROCESS AS p
+
+    UNION ALL
+
+    SELECT 
+        r.process_id,
+        r.original_command,
+        REPLACE(r.command_string, e.parm, e.parm_value) AS command_string,
+        r.cycle + 1 AS cycle
+    FROM 
+        ReplaceCTE AS r
+    JOIN 
+        oper.stg_cts_env AS e 
+    ON 
+        LOCATE(e.parm, r.command_string) > 0
+    WHERE 
+        r.cycle < 100 -- Limit to prevent potential infinite loops
+)
+
+SELECT 
+    process_id,
+    original_command,
+    MAX(command_string) AS replaced_command
+FROM 
+    ReplaceCTE
+GROUP BY 
+    process_id, original_command
+HAVING 
+    cycle = MAX(cycle) -- Ensures we take the last cycle where the final replacements are done
+;
