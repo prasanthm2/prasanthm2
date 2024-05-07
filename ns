@@ -40,3 +40,22 @@ WHERE
         GROUP BY process_id
     )
 ;
+
+
+-- Preparing a single statement solution for replacing variables without recursion
+SELECT 
+    p.process_id,
+    p.CMD_TX AS original_command,
+    XMLCAST(
+        XMLQUERY(
+            'transform copy $c := $cmd modify do replace value of $c with fn:replace($c, $parm, $value) return $c'
+            PASSING 
+                p.CMD_TX AS "cmd",
+                e.parm AS "parm",
+                e.parm_value AS "value"
+        ) AS VARCHAR(1000)
+    ) AS replaced_command
+FROM 
+    DICT.T_PROCESS p, oper.stg_cts_env e
+WHERE 
+    LOCATE(e.parm, p.CMD_TX) > 0
