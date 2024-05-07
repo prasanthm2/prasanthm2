@@ -1,10 +1,9 @@
--- Dropping the procedure if it already exists
+-- Drop the procedure if it exists
 DROP PROCEDURE IF EXISTS Replace_Command_Variables;
 
--- Creating the procedure
+-- Create the procedure
 CREATE PROCEDURE Replace_Command_Variables()
 LANGUAGE SQL
-MODIFIES SQL DATA
 BEGIN
     -- Declare variables
     DECLARE v_process_id INT;
@@ -12,8 +11,7 @@ BEGIN
     DECLARE v_parm VARCHAR(100);
     DECLARE v_parm_value VARCHAR(100);
     DECLARE v_modified_command VARCHAR(1000);
-    DECLARE at_end1 INT DEFAULT 0;
-    DECLARE at_end2 INT DEFAULT 0;
+    DECLARE at_end INT DEFAULT 0;
 
     -- Declare cursor for commands
     DECLARE command_cursor CURSOR FOR 
@@ -23,50 +21,48 @@ BEGIN
     DECLARE parm_cursor CURSOR FOR 
         SELECT parm, parm_value FROM oper.stg_cts_env;
 
-    -- Declare a condition for end of data
-    DECLARE CONTINUE HANDLER FOR NOT FOUND
-        SET at_end1 = 1;
+    -- Declare handler for end of data in cursors
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET at_end = 1;
 
     -- Open the command cursor
     OPEN command_cursor;
     FETCH command_cursor INTO v_process_id, v_command;
 
     -- Loop through commands
-    WHILE at_end1 = 0 DO
-        SET v_modified_command = v_command;
-        SET at_end2 = 0;
+    WHILE at_end = 0 DO
+        SET v_modified_command = v_command;  -- Initialize modified command
+        SET at_end = 0;  -- Reset end flag for parameter cursor
 
         -- Open the parameters cursor
         OPEN parm_cursor;
+
+        -- Fetch first parameter
         FETCH parm_cursor INTO v_parm, v_parm_value;
 
-        -- Declare handler for second cursor
-        DECLARE CONTINUE HANDLER FOR NOT FOUND
-            SET at_end2 = 1;
-
         -- Loop through parameters to replace in the command
-        WHILE at_end2 = 0 DO
+        WHILE at_end = 0 DO
             -- Replace occurrences of parameter with its value
             SET v_modified_command = REPLACE(v_modified_command, v_parm, v_parm_value);
+            -- Fetch next parameter
             FETCH parm_cursor INTO v_parm, v_parm_value;
         END WHILE;
+
+        -- Close the parameters cursor
         CLOSE parm_cursor;
 
-        -- Output the modified command
-        INSERT INTO SESSION.TEMP_COMMANDS
+        -- Insert the modified command into the temporary table
+        INSERT INTO SESSION.TEMP_COMMANDS(process_id, original_command, replaced_command)
         VALUES (v_process_id, v_command, v_modified_command);
 
+        -- Fetch the next command
         FETCH command_cursor INTO v_process_id, v_command;
+        -- Reset end flag for the next command
+        SET at_end = 0;
     END WHILE;
+
+    -- Close the command cursor
     CLOSE command_cursor;
 
-    -- Output the results
-    SELECT * FROM SESSION.TEMP_COMMANDS;
-END@
-
-
-CREATE GLOBAL TEMPORARY TABLE SESSION.TEMP_COMMANDS (
-    process_id INT,
-    original_command VARCHAR(1000),
-    replaced_command VARCHAR(1000)
-) ON COMMIT PRESERVE ROWS;
+    -- Optional: Output the results from the temporary table
+    -- SELECT * FROM SESSION.TEMP_COMMANDS;
+END;
