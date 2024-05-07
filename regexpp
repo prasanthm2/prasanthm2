@@ -5,3 +5,14 @@ SELECT
   REGEXP_SUBSTR(CMD_TX, '(?<=-f )[^ ]+') AS file_name
 FROM 
   DICT.T_PROCESS;
+
+
+SELECT 
+  REGEXP_SUBSTR(CMD_TX, '(?<=-d )[^ ]+') AS database_name,
+  REGEXP_SUBSTR(CMD_TX, '(?<=-s )[^ ]+') AS schema_name,
+  REGEXP_SUBSTR(CMD_TX, '(?<=-t )[^ ]+') AS table_name,
+  REGEXP_SUBSTR(CMD_TX, '(?<=-f )[^ ]+') AS full_path,
+  RTRIM(REGEXP_REPLACE(REGEXP_SUBSTR(CMD_TX, '(?<=-f )[^ ]+'), '[^\\]*\\$', ''), '\\') AS directory_path,
+  REGEXP_SUBSTR(REGEXP_SUBSTR(CMD_TX, '(?<=-f )[^ ]+'), '[^\\]*$') AS file_name
+FROM 
+  DICT.T_PROCESS;
