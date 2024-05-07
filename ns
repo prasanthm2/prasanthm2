@@ -1,61 +1,72 @@
-WITH ReplaceCTE (process_id, original_command, command_string, cycle) AS (
-    -- Initial select to set up the CTE with the base data
-    SELECT 
-        process_id,
-        CMD_TX AS original_command,
-        CMD_TX AS command_string,
-        1 AS cycle
-    FROM 
-        DICT.T_PROCESS
+-- Dropping the procedure if it already exists
+DROP PROCEDURE IF EXISTS Replace_Command_Variables;
 
-    UNION ALL
+-- Creating the procedure
+CREATE PROCEDURE Replace_Command_Variables()
+LANGUAGE SQL
+MODIFIES SQL DATA
+BEGIN
+    -- Declare variables
+    DECLARE v_process_id INT;
+    DECLARE v_command VARCHAR(1000);
+    DECLARE v_parm VARCHAR(100);
+    DECLARE v_parm_value VARCHAR(100);
+    DECLARE v_modified_command VARCHAR(1000);
+    DECLARE at_end1 INT DEFAULT 0;
+    DECLARE at_end2 INT DEFAULT 0;
 
-    -- Recursive part for replacing variables with values
-    SELECT 
-        r.process_id,
-        r.original_command,
-        REPLACE(r.command_string, e.parm, e.parm_value),
-        r.cycle + 1
-    FROM 
-        ReplaceCTE r
-    JOIN 
-        oper.stg_cts_env e 
-    ON 
-        LOCATE(e.parm, r.command_string) > 0
-    WHERE 
-        r.cycle < 100 -- This limit is important to prevent infinite recursion
-)
+    -- Declare cursor for commands
+    DECLARE command_cursor CURSOR FOR 
+        SELECT process_id, CMD_TX FROM DICT.T_PROCESS;
 
--- Final SELECT to get the last version of the command string after all replacements
-SELECT 
-    process_id,
-    original_command,
-    command_string AS replaced_command
-FROM 
-    ReplaceCTE
-WHERE 
-    (process_id, cycle) IN (
-        SELECT process_id, MAX(cycle)
-        FROM ReplaceCTE
-        GROUP BY process_id
-    )
-;
+    -- Declare cursor for parameters
+    DECLARE parm_cursor CURSOR FOR 
+        SELECT parm, parm_value FROM oper.stg_cts_env;
+
+    -- Declare a condition for end of data
+    DECLARE CONTINUE HANDLER FOR NOT FOUND
+        SET at_end1 = 1;
+
+    -- Open the command cursor
+    OPEN command_cursor;
+    FETCH command_cursor INTO v_process_id, v_command;
+
+    -- Loop through commands
+    WHILE at_end1 = 0 DO
+        SET v_modified_command = v_command;
+        SET at_end2 = 0;
+
+        -- Open the parameters cursor
+        OPEN parm_cursor;
+        FETCH parm_cursor INTO v_parm, v_parm_value;
+
+        -- Declare handler for second cursor
+        DECLARE CONTINUE HANDLER FOR NOT FOUND
+            SET at_end2 = 1;
+
+        -- Loop through parameters to replace in the command
+        WHILE at_end2 = 0 DO
+            -- Replace occurrences of parameter with its value
+            SET v_modified_command = REPLACE(v_modified_command, v_parm, v_parm_value);
+            FETCH parm_cursor INTO v_parm, v_parm_value;
+        END WHILE;
+        CLOSE parm_cursor;
+
+        -- Output the modified command
+        INSERT INTO SESSION.TEMP_COMMANDS
+        VALUES (v_process_id, v_command, v_modified_command);
+
+        FETCH command_cursor INTO v_process_id, v_command;
+    END WHILE;
+    CLOSE command_cursor;
+
+    -- Output the results
+    SELECT * FROM SESSION.TEMP_COMMANDS;
+END@
 
 
--- Preparing a single statement solution for replacing variables without recursion
-SELECT 
-    p.process_id,
-    p.CMD_TX AS original_command,
-    XMLCAST(
-        XMLQUERY(
-            'transform copy $c := $cmd modify do replace value of $c with fn:replace($c, $parm, $value) return $c'
-            PASSING 
-                p.CMD_TX AS "cmd",
-                e.parm AS "parm",
-                e.parm_value AS "value"
-        ) AS VARCHAR(1000)
-    ) AS replaced_command
-FROM 
-    DICT.T_PROCESS p, oper.stg_cts_env e
-WHERE 
-    LOCATE(e.parm, p.CMD_TX) > 0
+CREATE GLOBAL TEMPORARY TABLE SESSION.TEMP_COMMANDS (
+    process_id INT,
+    original_command VARCHAR(1000),
+    replaced_command VARCHAR(1000)
+) ON COMMIT PRESERVE ROWS;
