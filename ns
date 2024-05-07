@@ -1,11 +1,20 @@
--- Drop the procedure if it exists
-DROP PROCEDURE IF EXISTS Replace_Command_Variables;
+-- Drop the temporary table if it exists
+DROP TABLE IF EXISTS DICT.TEMP_COMMANDS;
 
--- Create the procedure
-CREATE PROCEDURE Replace_Command_Variables()
+-- Create a new global temporary table under the DICT schema
+CREATE GLOBAL TEMPORARY TABLE DICT.TEMP_COMMANDS (
+    process_id INT,
+    original_command VARCHAR(1000),
+    replaced_command VARCHAR(1000)
+) ON COMMIT PRESERVE ROWS;
+
+-- Drop the procedure if it exists
+DROP PROCEDURE IF EXISTS DICT.SP_ENV;
+
+-- Create the procedure under the DICT schema
+CREATE PROCEDURE DICT.SP_ENV()
 LANGUAGE SQL
 BEGIN
-    -- Declare variables
     DECLARE v_process_id INT;
     DECLARE v_command VARCHAR(1000);
     DECLARE v_parm VARCHAR(100);
@@ -13,56 +22,39 @@ BEGIN
     DECLARE v_modified_command VARCHAR(1000);
     DECLARE at_end INT DEFAULT 0;
 
-    -- Declare cursor for commands
     DECLARE command_cursor CURSOR FOR 
-        SELECT process_id, CMD_TX FROM DICT.T_PROCESS;
+        SELECT process_id, CMD_TX FROM DICT.T_PROCESS
+        WHERE CMD_TX LIKE '%$%';  -- Only fetch commands that might have replacements
 
-    -- Declare cursor for parameters
     DECLARE parm_cursor CURSOR FOR 
         SELECT parm, parm_value FROM oper.stg_cts_env;
 
-    -- Declare handler for end of data in cursors
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET at_end = 1;
 
-    -- Open the command cursor
     OPEN command_cursor;
     FETCH command_cursor INTO v_process_id, v_command;
 
-    -- Loop through commands
     WHILE at_end = 0 DO
-        SET v_modified_command = v_command;  -- Initialize modified command
-        SET at_end = 0;  -- Reset end flag for parameter cursor
+        SET v_modified_command = v_command;
 
-        -- Open the parameters cursor
         OPEN parm_cursor;
-
-        -- Fetch first parameter
         FETCH parm_cursor INTO v_parm, v_parm_value;
 
-        -- Loop through parameters to replace in the command
         WHILE at_end = 0 DO
-            -- Replace occurrences of parameter with its value
-            SET v_modified_command = REPLACE(v_modified_command, v_parm, v_parm_value);
-            -- Fetch next parameter
+            IF LOCATE(v_parm, v_modified_command) > 0 THEN
+                SET v_modified_command = REPLACE(v_modified_command, v_parm, v_parm_value);
+            END IF;
             FETCH parm_cursor INTO v_parm, v_parm_value;
         END WHILE;
 
-        -- Close the parameters cursor
         CLOSE parm_cursor;
 
-        -- Insert the modified command into the temporary table
-        INSERT INTO SESSION.TEMP_COMMANDS(process_id, original_command, replaced_command)
+        INSERT INTO DICT.TEMP_COMMANDS(process_id, original_command, replaced_command)
         VALUES (v_process_id, v_command, v_modified_command);
 
-        -- Fetch the next command
         FETCH command_cursor INTO v_process_id, v_command;
-        -- Reset end flag for the next command
         SET at_end = 0;
     END WHILE;
 
-    -- Close the command cursor
     CLOSE command_cursor;
-
-    -- Optional: Output the results from the temporary table
-    -- SELECT * FROM SESSION.TEMP_COMMANDS;
 END;
