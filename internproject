@@ -1,0 +1,18 @@
+Problem Statement:
+Metadata Suggestion Engine for Enhanced Data Management and Governance
+
+With the NFRT's Data team managing a centralized metadata repository for all departments, there is an increasing need to leverage this metadata to provide intelligent suggestions for improving data management, governance, and operational efficiency. The current system collects metadata but lacks a mechanism to analyze this data and provide actionable recommendations.
+
+
+Solution:
+Metadata Suggestion Engine
+
+We propose developing a suggestion engine that analyzes collected metadata and provides actionable recommendations for optimizing data management processes, improving data quality, and ensuring compliance with governance policies.
+
+Key Features:
+
+Data Quality Improvement Suggestions: Recommend validation rules and cleansing actions based on metadata patterns and anomalies.
+Schema Optimization Recommendations: Suggest indexing and schema changes based on query patterns and access frequency.
+Usage and Performance Insights: Provide insights into data usage trends and recommend caching, partitioning, archiving, or purging strategies.
+Governance and Compliance Recommendations: Automatically classify data and suggest security measures and retention policies based on metadata attributes.
+This solution will empower the NFRT Data team by providing actionable insights and recommendations, leveraging existing metadata to drive intelligent decision-making and improve data management practices.
