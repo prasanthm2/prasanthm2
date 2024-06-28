@@ -19,13 +19,12 @@ This solution will empower the NFRT Data team by providing actionable insights a
 
 
 
-
 Project Submission: Metadata Bridge
 Problem Statement:
 
 Metadata Bridge for Comprehensive Metadata Management
 
-NFRT's Data team requires a flexible and comprehensive solution for managing metadata from various sources and formats. The current ETL setup using Informatica is not sufficient for new projects and different types of metadata. There is a need for a unified Metadata Bridge that can handle onboarding new systems, integrating metadata from APIs, processing uploaded files, and automating metadata extraction and loading.
+NFRT's Data team requires a flexible and comprehensive solution for managing metadata from various sources and formats. There is a need for a unified Metadata Bridge that can handle onboarding new systems, integrating metadata from APIs, processing uploaded files, and automating metadata extraction and loading.
 
 Solution:
 
