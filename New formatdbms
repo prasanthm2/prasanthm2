@@ -1,7 +1,18 @@
-Technical Metadata: The technical metadata tables are populated with data sourced from both DB2 and Hadoop systems. For the DB2 sources, system queries are executed against the database's system tables, with metadata extracted and loaded into the tables using Informatica jobs. On the Hadoop side, data is ingested through an API that retrieves information from the Submarine Swagger UI. This data is first loaded into staging tables and subsequently moved to the final metadata tables through a series of stored procedures. These processes ensure that the technical metadata remains up-to-date and accurately reflects the structure and characteristics of the data within the system.
-
-Operational Metadata: Operational metadata captures essential job-related details and other runtime information from the CTS operational framework's Sybase database. This includes extracting information about Autosys job schedules, purge policies, and statistical data. Additionally, logs from Informatica are collected to track data processing activities, such as the volume of data inserted, updated, or deleted during ETL job runs. This operational metadata provides insights into the performance and reliability of data processing workflows, helping to monitor and optimize system operations.
-
-Lineage Metadata: Lineage metadata provides a detailed map of the data flow across different systems and processes. This information is gathered from multiple sources, including Informatica, Caspian Data Loader, and custom ETL scripts. For Informatica, the lineage is derived by parsing the XML of mappings to identify the sources and targets of ETL processes. Caspian Data Loader contributes lineage information through its Zookeeper configurations, which are analyzed to understand data movement. Custom ETL scripts, which may use commands such as distcp, are also scrutinized to track the flow of data across various stages of processing. This lineage metadata is crucial for understanding data dependencies and ensuring data integrity throughout the system.
-
-Additional Information: Beyond the specific categories of metadata, additional information is collected from TIE systems, including LDAP group details and ProIDs associated with different source locations. This supplementary data supports broader system management and security tasks, providing context and control over data access and usage across the platform.
+SELECT 
+    TRIM(
+        CASE 
+            WHEN LOCATE('targettable ', cmd_tx) > 0 THEN
+                SUBSTR(
+                    cmd_tx, 
+                    LOCATE('targettable ', cmd_tx) + LENGTH('targettable ') + 1, 
+                    COALESCE(
+                        LOCATE(' ', cmd_tx || ' ', LOCATE('targettable ', cmd_tx) + LENGTH('targettable ') + 1) 
+                        - (LOCATE('targettable ', cmd_tx) + LENGTH('targettable ') + 1), 
+                        LENGTH(cmd_tx)
+                    )
+                )
+            ELSE ''
+        END
+    ) AS extracted_value
+FROM 
+    your_table;
