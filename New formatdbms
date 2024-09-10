@@ -1,18 +1,67 @@
 SELECT 
     TRIM(
         CASE 
-            WHEN LOCATE('targettable ', cmd_tx) > 0 THEN
+            WHEN LOCATE('sourcedb ', cmd_tx) > 0 THEN
                 SUBSTR(
                     cmd_tx, 
-                    LOCATE('targettable ', cmd_tx) + LENGTH('targettable ') + 1, 
+                    LOCATE('sourcedb ', cmd_tx) + LENGTH('sourcedb '), 
                     COALESCE(
-                        LOCATE(' ', cmd_tx || ' ', LOCATE('targettable ', cmd_tx) + LENGTH('targettable ') + 1) 
-                        - (LOCATE('targettable ', cmd_tx) + LENGTH('targettable ') + 1), 
+                        LOCATE(' ', cmd_tx || ' ', LOCATE('sourcedb ', cmd_tx) + LENGTH('sourcedb ')) 
+                        - (LOCATE('sourcedb ', cmd_tx) + LENGTH('sourcedb ')), 
                         LENGTH(cmd_tx)
                     )
                 )
             ELSE ''
         END
-    ) AS extracted_value
+    ) AS sourcedb_value,
+
+    TRIM(
+        CASE 
+            WHEN LOCATE('targetdb ', cmd_tx) > 0 THEN
+                SUBSTR(
+                    cmd_tx, 
+                    LOCATE('targetdb ', cmd_tx) + LENGTH('targetdb '), 
+                    COALESCE(
+                        LOCATE(' ', cmd_tx || ' ', LOCATE('targetdb ', cmd_tx) + LENGTH('targetdb ')) 
+                        - (LOCATE('targetdb ', cmd_tx) + LENGTH('targetdb ')), 
+                        LENGTH(cmd_tx)
+                    )
+                )
+            ELSE ''
+        END
+    ) AS targetdb_value,
+
+    TRIM(
+        CASE 
+            WHEN LOCATE('sourcetable ', cmd_tx) > 0 THEN
+                SUBSTR(
+                    cmd_tx, 
+                    LOCATE('sourcetable ', cmd_tx) + LENGTH('sourcetable '), 
+                    COALESCE(
+                        LOCATE(' ', cmd_tx || ' ', LOCATE('sourcetable ', cmd_tx) + LENGTH('sourcetable ')) 
+                        - (LOCATE('sourcetable ', cmd_tx) + LENGTH('sourcetable ')), 
+                        LENGTH(cmd_tx)
+                    )
+                )
+            ELSE ''
+        END
+    ) AS sourcetable_value,
+
+    TRIM(
+        CASE 
+            WHEN LOCATE('targettable ', cmd_tx) > 0 THEN
+                SUBSTR(
+                    cmd_tx, 
+                    LOCATE('targettable ', cmd_tx) + LENGTH('targettable '), 
+                    COALESCE(
+                        LOCATE(' ', cmd_tx || ' ', LOCATE('targettable ', cmd_tx) + LENGTH('targettable ')) 
+                        - (LOCATE('targettable ', cmd_tx) + LENGTH('targettable ')), 
+                        LENGTH(cmd_tx)
+                    )
+                )
+            ELSE ''
+        END
+    ) AS targettable_value
+
 FROM 
     your_table;
