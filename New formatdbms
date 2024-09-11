@@ -1,67 +1,18 @@
 SELECT 
     TRIM(
         CASE 
-            WHEN LOCATE('sourcedb ', cmd_tx) > 0 THEN
+            WHEN LOCATE('RUN_DT', cmd_tx) > 0 THEN
                 SUBSTR(
                     cmd_tx, 
-                    LOCATE('sourcedb ', cmd_tx) + LENGTH('sourcedb '), 
-                    COALESCE(
-                        LOCATE(' ', cmd_tx || ' ', LOCATE('sourcedb ', cmd_tx) + LENGTH('sourcedb ')) 
-                        - (LOCATE('sourcedb ', cmd_tx) + LENGTH('sourcedb ')), 
-                        LENGTH(cmd_tx)
-                    )
+                    LOCATE('RUN_DT', cmd_tx) + LENGTH('RUN_DT') + 1 + 
+                    LOCATE(' ', SUBSTR(cmd_tx, LOCATE('RUN_DT', cmd_tx) + LENGTH('RUN_DT') + 1)), 
+                    LOCATE(' ', cmd_tx || ' ', LOCATE('RUN_DT', cmd_tx) + LENGTH('RUN_DT') + 1 + 
+                    LOCATE(' ', SUBSTR(cmd_tx, LOCATE('RUN_DT', cmd_tx) + LENGTH('RUN_DT') + 1))) 
+                    - (LOCATE('RUN_DT', cmd_tx) + LENGTH('RUN_DT') + 1 + 
+                    LOCATE(' ', SUBSTR(cmd_tx, LOCATE('RUN_DT', cmd_tx) + LENGTH('RUN_DT') + 1)))
                 )
             ELSE ''
         END
-    ) AS sourcedb_value,
-
-    TRIM(
-        CASE 
-            WHEN LOCATE('targetdb ', cmd_tx) > 0 THEN
-                SUBSTR(
-                    cmd_tx, 
-                    LOCATE('targetdb ', cmd_tx) + LENGTH('targetdb '), 
-                    COALESCE(
-                        LOCATE(' ', cmd_tx || ' ', LOCATE('targetdb ', cmd_tx) + LENGTH('targetdb ')) 
-                        - (LOCATE('targetdb ', cmd_tx) + LENGTH('targetdb ')), 
-                        LENGTH(cmd_tx)
-                    )
-                )
-            ELSE ''
-        END
-    ) AS targetdb_value,
-
-    TRIM(
-        CASE 
-            WHEN LOCATE('sourcetable ', cmd_tx) > 0 THEN
-                SUBSTR(
-                    cmd_tx, 
-                    LOCATE('sourcetable ', cmd_tx) + LENGTH('sourcetable '), 
-                    COALESCE(
-                        LOCATE(' ', cmd_tx || ' ', LOCATE('sourcetable ', cmd_tx) + LENGTH('sourcetable ')) 
-                        - (LOCATE('sourcetable ', cmd_tx) + LENGTH('sourcetable ')), 
-                        LENGTH(cmd_tx)
-                    )
-                )
-            ELSE ''
-        END
-    ) AS sourcetable_value,
-
-    TRIM(
-        CASE 
-            WHEN LOCATE('targettable ', cmd_tx) > 0 THEN
-                SUBSTR(
-                    cmd_tx, 
-                    LOCATE('targettable ', cmd_tx) + LENGTH('targettable '), 
-                    COALESCE(
-                        LOCATE(' ', cmd_tx || ' ', LOCATE('targettable ', cmd_tx) + LENGTH('targettable ')) 
-                        - (LOCATE('targettable ', cmd_tx) + LENGTH('targettable ')), 
-                        LENGTH(cmd_tx)
-                    )
-                )
-            ELSE ''
-        END
-    ) AS targettable_value
-
+    ) AS extracted_value
 FROM 
     your_table;
