@@ -1,4 +1,37 @@
-Our Metadata Inventory application is designed to provide comprehensive metadata details for your projects. You can easily manage and access information related to tables, views, files, jobs, data platforms, and data lineages. We offer intuitive screens for all these categories, ensuring seamless navigation and efficient metadata management.
-
-For any support or queries, please reach out to us at xxxx@mail.com.
-For support or queries, contact us at xxxx@mail.com.
+WITH DateRange AS (
+    -- Generate a sequence of dates within the required range
+    SELECT DISTINCT CAST(RUN_DATE AS DATE) AS Date
+    FROM DICT.T_PROCESS_RUN_AUDIT_LOG
+    WHERE RUN_DATE BETWEEN '2024-08-01' AND '2024-08-31'  -- Set the date range as required
+),
+ExpectedRuns AS (
+    -- Expected number of runs for each job key and resource key
+    SELECT 
+        r.RSRC_KY,
+        r.PROCESS_KY,
+        COUNT(d.Date) AS Expected_Days
+    FROM DICT.T_PROCESS_RUN_AUDIT_LOG r
+    CROSS JOIN DateRange d
+    GROUP BY r.RSRC_KY, r.PROCESS_KY
+),
+ActualRuns AS (
+    -- Actual number of runs for each job key and resource key
+    SELECT 
+        RSRC_KY,
+        PROCESS_KY,
+        COUNT(DISTINCT RUN_DATE) AS Actual_Days
+    FROM DICT.T_PROCESS_RUN_AUDIT_LOG
+    WHERE RUN_DATE BETWEEN '2024-08-01' AND '2024-08-31'  -- Set the date range as required
+    GROUP BY RSRC_KY, PROCESS_KY
+)
+-- Calculate the Freshness Score
+SELECT 
+    e.RSRC_KY,
+    e.PROCESS_KY,
+    e.Expected_Days,
+    a.Actual_Days,
+    (CAST(a.Actual_Days AS FLOAT) / e.Expected_Days) * 100 AS Freshness_Score
+FROM ExpectedRuns e
+LEFT JOIN ActualRuns a 
+    ON e.RSRC_KY = a.RSRC_KY AND e.PROCESS_KY = a.PROCESS_KY
+ORDER BY e.RSRC_KY, e.PROCESS_KY;
