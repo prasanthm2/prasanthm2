@@ -1,0 +1,42 @@
+WITH RoutineTables AS (
+    -- Get the tables associated with stored procedures (dependencies)
+    SELECT
+        ROUTINENAME AS ProcedureName,
+        TABSCHEMA || '.' || TABNAME AS TableName,
+        CASE 
+            WHEN BTYPE = 'T' THEN 'Table'
+            ELSE 'Other'
+        END AS ObjectType
+    FROM
+        SYSCAT.ROUTINEDEP
+    WHERE
+        BTYPE = 'T' -- 'T' stands for table dependencies
+),
+ProcedureCode AS (
+    -- Get the procedure source code (if available) to help identify INSERT/UPDATE/DELETE
+    SELECT
+        ROUTINENAME AS ProcedureName,
+        TEXT AS ProcedureDefinition
+    FROM
+        SYSCAT.ROUTINES
+    WHERE
+        ROUTINETYPE = 'P' -- P stands for stored procedures
+)
+-- Join the routine dependencies with the procedure code to identify source and target tables
+SELECT
+    rt.ProcedureName,
+    CASE
+        -- Try to infer the operation type from the stored procedure definition
+        WHEN pc.ProcedureDefinition LIKE '%SELECT%' THEN 'Source'
+        WHEN pc.ProcedureDefinition LIKE '%INSERT%' OR pc.ProcedureDefinition LIKE '%UPDATE%' OR pc.ProcedureDefinition LIKE '%DELETE%' THEN 'Target'
+        ELSE 'Unknown'
+    END AS OperationType,
+    rt.TableName
+FROM
+    RoutineTables rt
+LEFT JOIN
+    ProcedureCode pc
+ON
+    rt.ProcedureName = pc.ProcedureName
+ORDER BY
+    rt.ProcedureName, OperationType;
