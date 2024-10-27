@@ -1,32 +1,96 @@
-for source in source_tables:
-    for target in target_tables:
-        records.append({
-            'source_table': source,
-            'target_table': target,
-            'relationship_type': 'source_to_target',
-            'query_type': 'VIEW',
-            'schema': None,
-            'full_query': new_commands_str
-        })
 
-lineage_df=pd.DataFrame(records,columns='source_table',
-        'target_table',
-        'relationship_type',
-        'query_type',
-        'schema',
-        'full_query'
-    ])
-d=[]
+def getDb2Connection(dbName):
+    return ms.db2.connect(dbName)
+    print('DBConnection is initiated')
 
-for column in l.get_column_lineage():
-    d.append(
-        {   "name" : result["OBJECTNAME"],
-            "type" : result["TYP"],
-            "source_table" :  column[0].parent.raw_name,
-            "source_column" : str(column[0].raw_name),
-            "source_schema" : str(column[0].parent.schema),
-            "target_table" : column[1].parent.raw_name,
-            "target_column" : str(column[1].raw_name),
-            "target_schema" : str(column[1].parent.schema)
-        }
-        )
+def step_definition():
+    DBConnection = getDb2Connection("NYQD_LC_SYSDICT")
+    print("Database connection success")
+    cursor = DBConnection.cursor()
+    cursor.execute("SELECT a sourcedb, 'V' TYP, TRIM(TABLE_SCHEMA) objectschema, TABLE_NAME objectname FROM SYSIBM.VIEWS WHERE TABLE_SCHEMA ='DICT'")
+    #query_result = cursor.fetchall()
+    return [(cursor.description[i][0], value) for i, value in enumerate(row) for row in cursor.fetchall()]
+    #return (result[0] if result else None) if False else result
+    #query_result
+
+def sql_parser(file_path):
+    queries = [
+        f"sed -i '1,2d' {file_path}",
+        f"sed -i '1d' {file_path}",
+        f"sed -i '{file_path}' | sed '1,10d' | tac > tmp.sql && mv tmp.sql {file_path}",
+        f"sed -i '$ s/.$//' {file_path}"
+    ]
+    
+    for query in queries:
+        try:
+            os.system(query)
+        except Exception as e:
+            print(f"Error executing query: {query}\nError: {str(e)}")
+    
+    return file_path
+
+def load_db2(result):
+    file_create_loc = '/global/user/p/pm/pmpra/lineage/scriptedfiles/query.sql'
+    file_create_dir = '/global/user/p/pm/pmpra/lineage/scriptedfiles/'
+    
+    for record in result:
+        sourcedb = record['SOURCEDB']
+        objectschema = record['OBJECTSCHEMA']
+        objectname = record['OBJECTNAME']
+        typ = record['TYP']
+        
+        try:
+            if typ == 'V':
+                cmd = f'db2look -d {sourcedb} -z {objectschema} -v {objectname} -e -o {file_create_loc}'
+                os.system(cmd)
+                sql_parser(file_create_loc)
+            else:
+                cmd = (f'db2 EXPORT TO {file_create_dir}sample OF DEL LOBS TO {file_create_dir} '
+                      f'LOBFILE PHOTO MODIFIED BY LOBSINFILE "SELECT TEXT FROM SYSIBM.SYSROUTINES '
+                      f'WHERE ROUTINENAME = \'{objectname}\'"')
+                os.system(cmd)
+                cmd = f'mv {file_create_dir}PHOTO.OUT {file_create_loc}'
+                os.system(cmd)
+            
+            with open(file_create_loc, 'r') as file:
+                data = file.read()
+            return LineageRunner(data)
+            
+        except Exception as e:
+            print(f"Error processing DB2 output: {str(e)}")
+            raise
+
+def parse_output(result, lineage_runner):
+    parsed_data = []
+    
+    try:
+        for column in lineage_runner.get_column_lineage():
+            parsed_data.append({
+                "objectDB": result["SOURCEDB"],
+                "objectSCHEMA": result["OBJECTSCHEMA"],
+                "objectname": result["OBJECTNAME"],
+                "type": result["TYP"],
+                "source_table": column[0].parent.raw_name,
+                "source_column": str(column[0].raw_name),
+                "source_schema": str(column[0].parent.schema),
+                "target_table": column[1].parent.raw_name,
+                "target_column": str(column[1].raw_name),
+                "target_schema": str(column[1].parent.schema)
+            })
+        return parsed_data
+    except Exception as e:
+        print(f"Error parsing output: {str(e)}")
+        raise
+
+def main():
+    try:
+        result = step_definition()
+        lineage_runner = load_db2(result)
+        print("Parsed lineage data:", json.dumps(parsed_data, indent=2))
+        return parsed_data
+    except Exception as e:
+        print(f"Error in main execution: {str(e)}")
+        return None
+
+if __name__ == '__main__':
+    main()
