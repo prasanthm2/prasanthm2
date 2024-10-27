@@ -1,0 +1,18 @@
+for source in source_tables:
+    for target in target_tables:
+        records.append({
+            'source_table': source,
+            'target_table': target,
+            'relationship_type': 'source_to_target',
+            'query_type': 'VIEW',
+            'schema': None,
+            'full_query': new_commands_str
+        })
+
+lineage_df=pd.DataFrame(records,columns='source_table',
+        'target_table',
+        'relationship_type',
+        'query_type',
+        'schema',
+        'full_query'
+    ])
