@@ -16,3 +16,17 @@ lineage_df=pd.DataFrame(records,columns='source_table',
         'schema',
         'full_query'
     ])
+d=[]
+
+for column in l.get_column_lineage():
+    d.append(
+        {   "name" : result["OBJECTNAME"],
+            "type" : result["TYP"],
+            "source_table" :  column[0].parent.raw_name,
+            "source_column" : str(column[0].raw_name),
+            "source_schema" : str(column[0].parent.schema),
+            "target_table" : column[1].parent.raw_name,
+            "target_column" : str(column[1].raw_name),
+            "target_schema" : str(column[1].parent.schema)
+        }
+        )
