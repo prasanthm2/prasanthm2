@@ -68,3 +68,7 @@ def parse_output(result):
             })
 
         return lineage_data
+
+    except Exception as e:
+        print(f"Error encountered: {str(e)}")
+        return None
