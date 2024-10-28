@@ -1,74 +1,115 @@
-def parse_output(result):
-    try:
-        lineage = load_db2(result)
-        lineage_data = []
 
-        for column in lineage.get_column_lineage():
-            try:
-                object_db = result.get("SOURCEDB", None)
-            except Exception:
-                object_db = None
+def sql_parser(file_path):
+    filecreateloc = file_path
+    queries = [
+        f"sed -i '1,25d' {filecreateloc}",
+        f"sed -i '$ s/.$// ' {filecreateloc}",
+        f"tac {filecreateloc} | sed '1,5 d' | tac>tmp.sql && mv tmp.sql {filecreateloc}",
+        f"sed -i '$ s/.$// ' {filecreateloc}"
+    ]
+
+    for query in queries:
+        try:
+            os.system(query)
+        except Exception as e:
+            print(f"Error executing query: {query}\nError: {str(e)}")
+
+    return file_path
+
+def load_db2(result):
+    file_create_loc = '/home/abhimvp/freelance/SQL/query.sql'
+    #file_create_dir = '/v/global/user/p/pm/pmpra/lineage/scriptedfiles/'
+    arr = []
+    for record in result:
+        sourcedb = record['SOURCEDB']
+        objectschema = record['OBJECTSCHEMA']
+        objectname = record['OBJECTNAME']
+        typ = record['TYP']
+        if typ == 'V':
+            #print(f'[*] Iteration number: ', c)
+            # cmd = f'db2look -d {sourcedb} -z {objectschema} -v {objectname} -e -o {file_create_loc}'
+            # os.system(cmd)
+            sql_parser(file_create_loc)
+            with open(file_create_loc, 'r') as file:
+                data = file.read()
+            arr.append({"object": LineageRunner(data), "source": record})
+        else:
             
-            try:
-                object_schema = result.get("OBJECTSCHEMA", None)
-            except Exception:
-                object_schema = None
 
-            try:
-                object_name = result.get("OBJECTNAME", None)
-            except Exception:
-                object_name = None
 
-            try:
-                object_type = result.get("TYP", None)
-            except Exception:
-                object_type = None
+    return arr
+#output : [{'object':<>,'source':{"SOURCEDB":"","OBJECTSCHEMA":"","TYP":"","OBJECTNAME":""}},{'object':<>,'source':{"SOURCEDB":"","OBJECTSCHEMA":"","TYP":"","OBJECTNAME":""}} ]
 
-            try:
-                source_table = getattr(column[0].parent, "raw_name", None)
-            except Exception:
-                source_table = None
 
-            try:
-                source_column = getattr(column[0], "raw_name", None)
-            except Exception:
-                source_column = None
+def parse_output(result):
+    lineage = load_db2(result)
+    lineage_data = []
+    for item in lineage:
+        source_info = item.get("source", {})
+        object_info = item.get("object", None)
 
-            try:
-                source_schema = getattr(column[0].parent, "schema", None)
-            except Exception:
-                source_schema = None
+        object_db = source_info.get("SOURCEDB", None)
+        object_schema = source_info.get("OBJECTSCHEMA", None)
+        object_name = source_info.get("OBJECTNAME", None)
+        object_type = source_info.get("TYP", None)
+        oc = object_info.get_column_lineage()
+        if len(oc) > 0:
 
-            try:
-                target_table = getattr(column[1].parent, "raw_name", None)
-            except Exception:
-                target_table = None
+            for column in object_info.get_column_lineage():
+                try:
+                    source_table = getattr(column[0].parent, "raw_name", None)
+                except Exception:
+                    source_table = None
 
-            try:
-                target_column = getattr(column[1], "raw_name", None)
-            except Exception:
-                target_column = None
+                try:
+                    source_column = getattr(column[0], "raw_name", None)
+                except Exception:
+                    source_column = None
 
-            try:
-                target_schema = getattr(column[1].parent, "schema", None)
-            except Exception:
-                target_schema = None
+                try:
+                    source_schema = getattr(column[0].parent, "schema", None)
+                except Exception:
+                    source_schema = None
+
+                try:
+                    target_table = getattr(column[1].parent, "raw_name", None)
+                except Exception:
+                    target_table = None
+
+                try:
+                    target_column = getattr(column[1], "raw_name", None)
+                except Exception:
+                    target_column = None
+
+                try:
+                    target_schema = getattr(column[1].parent, "schema", None)
+                except Exception:
+                    target_schema = None
+
+                lineage_data.append({
+                    "objectDB": object_db,
+                    "objectSCHEMA": object_schema,
+                    "objectname": object_name,
+                    "type": object_type,
+                    "source_table": source_table,
+                    "source_column": source_column,
+                    "source_schema": source_schema,
+                    "target_table": target_table,
+                    "target_column": target_column,
+                    "target_schema": target_schema
+                })
+        else:
 
             lineage_data.append({
                 "objectDB": object_db,
                 "objectSCHEMA": object_schema,
                 "objectname": object_name,
                 "type": object_type,
-                "source_table": source_table,
-                "source_column": source_column,
-                "source_schema": source_schema,
-                "target_table": target_table,
-                "target_column": target_column,
-                "target_schema": target_schema
+                "source_table": None,
+                "source_column": None,
+                "source_schema": None,
+                "target_table": None,
+                "target_column": None,
+                "target_schema": None
             })
-
-        return lineage_data
-
-    except Exception as e:
-        print(f"Error encountered: {str(e)}")
-        return None
+    return lineage_data
