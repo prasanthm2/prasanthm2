@@ -1,4 +1,9 @@
 
+from sqllineage.runner import LineageRunner
+import os,sqlparse
+import pandas as pd
+
+
 def sql_parser(file_path):
     filecreateloc = file_path
     queries = [
@@ -16,30 +21,30 @@ def sql_parser(file_path):
 
     return file_path
 
+
 def load_db2(result):
-    file_create_loc = '/home/abhimvp/freelance/SQL/query.sql'
-    #file_create_dir = '/v/global/user/p/pm/pmpra/lineage/scriptedfiles/'
+    file_create_loc = '/v/global/user/p/pm/pmpra/lineage/scriptedfiles/query.sql'
     arr = []
+
+    if isinstance(result, dict):
+        result = [result]
+
     for record in result:
-        sourcedb = record['SOURCEDB']
-        objectschema = record['OBJECTSCHEMA']
-        objectname = record['OBJECTNAME']
-        typ = record['TYP']
+        sourcedb = record.get('SOURCEDB')
+        objectschema = record.get('OBJECTSCHEMA')
+        objectname = record.get('OBJECTNAME')
+        typ = record.get('TYP')
+
         if typ == 'V':
-            #print(f'[*] Iteration number: ', c)
-            # cmd = f'db2look -d {sourcedb} -z {objectschema} -v {objectname} -e -o {file_create_loc}'
-            # os.system(cmd)
             sql_parser(file_create_loc)
             with open(file_create_loc, 'r') as file:
                 data = file.read()
-            arr.append({"object": LineageRunner(data), "source": record})
-        else:
-            
 
+            parsed_data = sqlparse.format(data)
+
+            arr.append({"object": LineageRunner(parsed_data), "source": record})
 
     return arr
-#output : [{'object':<>,'source':{"SOURCEDB":"","OBJECTSCHEMA":"","TYP":"","OBJECTNAME":""}},{'object':<>,'source':{"SOURCEDB":"","OBJECTSCHEMA":"","TYP":"","OBJECTNAME":""}} ]
-
 
 def parse_output(result):
     lineage = load_db2(result)
@@ -93,16 +98,16 @@ def parse_output(result):
                     "type": object_type,
                     "source_table": source_table,
                     "source_column": source_column,
-                    "source_schema": source_schema,
+                    "source_schema": str(source_schema),
                     "target_table": target_table,
                     "target_column": target_column,
-                    "target_schema": target_schema
+                    "target_schema": str(target_schema)
                 })
         else:
 
             lineage_data.append({
                 "objectDB": object_db,
-                "objectSCHEMA": object_schema,
+                "objectSCHEMA": None,
                 "objectname": object_name,
                 "type": object_type,
                 "source_table": None,
@@ -112,4 +117,4 @@ def parse_output(result):
                 "target_column": None,
                 "target_schema": None
             })
-    return lineage_data
+    return {"lineage_data": lineage_data, "Data-Frame": pd.DataFrame(lineage_data)}
