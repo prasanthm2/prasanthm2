@@ -1,60 +1,52 @@
--- Drop the temporary table if it exists
-DROP TABLE IF EXISTS DICT.TEMP_COMMANDS;
+1. Details of What We Get from MS Map, How, and Where It Is Used
 
--- Create a new global temporary table under the DICT schema
-CREATE GLOBAL TEMPORARY TABLE DICT.TEMP_COMMANDS (
-    process_id INT,
-    original_command VARCHAR(1000),
-    replaced_command VARCHAR(1000)
-) ON COMMIT PRESERVE ROWS;
+    We use data from MS Map in a unique way: rather than treating it as standalone metadata, we integrate it into our data catalog application.
+    For instance, LDAP group details from MS Map are crucial in linking datasets to the appropriate departments.
+    We also utilize the person graph to establish connections between datasets and their creators, giving context to data ownership.
+    This integration significantly enriches our metadata catalog, ensuring it is well-connected and insightful for organizational use.
 
--- Drop the procedure if it exists
-DROP PROCEDURE IF EXISTS DICT.SP_ENV;
+2. Small Snippet on All the Sources
 
--- Create the procedure under the DICT schema
-CREATE PROCEDURE DICT.SP_ENV()
-LANGUAGE SQL
-BEGIN
-    DECLARE v_process_id INT;
-    DECLARE v_command VARCHAR(1000);
-    DECLARE v_parm VARCHAR(100);
-    DECLARE v_parm_value VARCHAR(100);
-    DECLARE v_modified_command VARCHAR(1000);
-    DECLARE at_end INT DEFAULT 0;
+    From DB2 and Hadoop: Our technical metadata collection is quite comprehensive, covering tables, views, columns, and more. We gather this information using system queries and APIs, and it’s processed through structured procedures.
+    Through CTS Ops: We gather operational metadata, which helps us monitor job schedules, policy details, and ETL performance. This data is essential for keeping our ETL processes efficient and reliable.
+    Using ETL Tools: Lineage metadata comes from tools like Informatica and CDL. We create this by parsing XML configurations and custom scripts, giving us a clear view of data flow and dependencies.
+    Via TAI Systems: Additional metadata, like LDAP and ProID information, supports our access control and governance strategies.
 
-    DECLARE command_cursor CURSOR FOR 
-        SELECT process_id, CMD_TX FROM DICT.T_PROCESS
-        WHERE CMD_TX LIKE '%$%';  -- Only fetch commands that might have replacements
+3. Blurb on the Various Inferences We Do When We Process Data
 
-    DECLARE parm_cursor CURSOR FOR 
-        SELECT parm, parm_value FROM oper.stg_cts_env;
+    We link data entities by connecting job schedules from CTS Ops to tables, which clarifies how ETL workflows impact data assets.
+    ETL configurations from tools like Informatica are analyzed to map data from its source to the target.
+    Dependency rules, such as those based on naming conventions and retention policies, ensure our data remains consistent and reliable.
+    We’ve also automated many processes to make metadata parsing and lineage creation efficient, providing a transparent view of data movement and ensuring operational compliance.
 
-    DECLARE CONTINUE HANDLER FOR NOT FOUND SET at_end = 1;
 
-    OPEN command_cursor;
-    FETCH command_cursor INTO v_process_id, v_command;
+1. Details of What We Get from MS Map, How, and Where It Is Used
 
-    WHILE at_end = 0 DO
-        SET v_modified_command = v_command;
+    Purpose: We don’t use MS Map data as standalone metadata but rather to enhance our data catalog with relevant connections.
+    Usage Examples:
+        LDAP Group Details: Used to link datasets to the respective departments that utilize them.
+        Person Graph: Connects datasets to the creators, providing insight into data ownership and creation.
+    Integration Benefit: This approach enriches our metadata catalog, making it more useful for organizational context and user associations.
 
-        OPEN parm_cursor;
-        FETCH parm_cursor INTO v_parm, v_parm_value;
+2. Small Snippet on All the Sources
 
-        WHILE at_end = 0 DO
-            IF LOCATE(v_parm, v_modified_command) > 0 THEN
-                SET v_modified_command = REPLACE(v_modified_command, v_parm, v_parm_value);
-            END IF;
-            FETCH parm_cursor INTO v_parm, v_parm_value;
-        END WHILE;
+    DB2 and Hadoop:
+        Technical Metadata: Collected via system queries (DB2) and APIs (Hadoop), including tables, views, columns, indexes, and space usage.
+        Processing: Data is processed through stored procedures to ensure accuracy and relevance.
+    CTS Ops:
+        Operational Metadata: Includes job schedules, purge policies, and ETL logs to monitor system performance.
+        Usage: Helps in tracking and optimizing ETL processes.
+    ETL Tools (Informatica, CDL, Custom Scripts):
+        Lineage Metadata: Created by parsing ETL configurations, XML files, and scripts to understand data flow.
+        Purpose: Enables end-to-end data traceability.
+    TAI Systems:
+        Additional Metadata: Collects details like LDAP groups and ProIDs for managing access control.
+        Governance: Supports data access and security measures.
 
-        CLOSE parm_cursor;
+3. Blurb on the Various Inferences We Do When We Process Data
 
-        INSERT INTO DICT.TEMP_COMMANDS(process_id, original_command, replaced_command)
-        VALUES (v_process_id, v_command, v_modified_command);
-
-        FETCH command_cursor INTO v_process_id, v_command;
-        SET at_end = 0;
-    END WHILE;
-
-    CLOSE command_cursor;
-END;
+    Entity Linking: Connects job schedules from CTS Ops to tables, linking ETL workflows to data assets.
+    ETL Parsing: Analyzes configurations from Informatica and CDL to determine source-to-target mappings.
+    Data Dependency Rules: Uses job frequency, naming conventions, and retention policies to ensure data integrity.
+    Automated Processes: Employs scripts to parse ETL code, making lineage creation efficient and comprehensive.
+    Traceability: Provides a full view of data movement, helping maintain compliance and operational transparency.
