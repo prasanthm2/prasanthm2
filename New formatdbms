@@ -1,18 +1,35 @@
-SELECT 
-    TRIM(
-        CASE 
-            WHEN LOCATE('RUN_DT', cmd_tx) > 0 THEN
-                SUBSTR(
-                    cmd_tx, 
-                    LOCATE('RUN_DT', cmd_tx) + LENGTH('RUN_DT') + 1 + 
-                    LOCATE(' ', SUBSTR(cmd_tx, LOCATE('RUN_DT', cmd_tx) + LENGTH('RUN_DT') + 1)), 
-                    LOCATE(' ', cmd_tx || ' ', LOCATE('RUN_DT', cmd_tx) + LENGTH('RUN_DT') + 1 + 
-                    LOCATE(' ', SUBSTR(cmd_tx, LOCATE('RUN_DT', cmd_tx) + LENGTH('RUN_DT') + 1))) 
-                    - (LOCATE('RUN_DT', cmd_tx) + LENGTH('RUN_DT') + 1 + 
-                    LOCATE(' ', SUBSTR(cmd_tx, LOCATE('RUN_DT', cmd_tx) + LENGTH('RUN_DT') + 1)))
-                )
-            ELSE ''
-        END
-    ) AS extracted_value
-FROM 
-    your_table;
+1. Performance and Impact
+Context for Rating: Tanisha has shown a strong commitment to her tasks and always completes them on time. She quickly adapts to new challenges and is always ready to learn. Her contributions have helped the team a lot, especially in React.js tasks. She works well with the team and has a positive attitude, which helps in achieving project goals.
+
+2. Risk and Controls
+Context for Rating: Tanisha is very careful when it comes to following policies and guidelines. She keeps an eye on risks and manages her tasks responsibly. She always makes sure her work is done properly, reducing errors and keeping everything smooth.
+
+3. Culture and Values
+Context for Rating: Tanisha is approachable and works well with everyone on the team. She respects her team members and is always willing to help. Her friendly nature and positive attitude make her a great fit for the team. She takes her work seriously and is a good example of teamwork and collaboration.
+
+4. Developmental Feedback
+Feedback: Tanisha can focus on improving her technical skills further by exploring advanced React.js concepts and other related tools. She should also try to take ownership of some independent tasks to build more confidence and grow her expertise.
+
+Let me know if this works for you or if you'd like me to tweak anything!
+
+
+
+
+
+
+You said:
+okay what about overall assesment sections/.
+ChatGPT said:
+ChatGPT
+Here’s how you can frame the Overall Assessment section in the same casual and simple tone, matching your old reviews:
+
+Overall Assessment
+1. Performance and Impact:
+Tanisha is doing a great job overall. She has been very enthusiastic and supportive in her role. She learns quickly, handles her React.js tasks well, and delivers results on time. Her positive attitude and eagerness to learn make her a valuable team member.
+
+2. Risk and Controls:
+Tanisha follows all the company rules and guidelines properly. She is careful about risks and ensures her work meets all the standards. She handles her responsibilities with a lot of care, which helps the team avoid any issues.
+
+3. Culture and Values:
+Tanisha is proactive and very approachable. She never hesitates to ask for help or support her team. Her friendly attitude and willingness to learn have helped her adjust well with the team. She also treats everyone with respect and sets a good example for teamwork.
+
