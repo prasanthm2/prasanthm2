@@ -1,0 +1,158 @@
+Requirement Document: Cognos Reports Lineage Derivation & Entitlement Usage Enhancement
+
+1. Project Overview
+
+The objective of this project is to automate the process of extracting, transforming, and loading Cognos report data into the System Dictionary database while also enhancing UI components for entitlement and usage tracking. This initiative will improve metadata lineage visibility, data usage tracking, and system integration.
+
+2. Scope of Work
+
+This project consists of two major components:
+
+2.1 Automated Process for Cognos Data Extraction
+
+Develop an automated pipeline to fetch Cognos report details and store them in the staging table.
+
+Implement a stored procedure to process and move data to snapshot tables.
+
+Enhance the existing parser process to extract table-level lineage from SQL queries and load the results into the metadata repository.
+
+2.2 UI Changes - Entitlement & Usage
+
+Enable entitlement sections that were previously hidden.
+
+Add new sections to the Resource screen to display entitlements and usage information.
+
+Introduce three types of usage categories:
+
+Visualization
+
+Virtualization
+
+Views
+
+Display relevant metadata, including:
+
+Resource Name
+
+Usage Type
+
+Usage By
+
+Usage Name
+
+3. Detailed Requirements
+
+3.1 Cognos Data Lineage Derivation Process
+
+Source System: Cognos Reports
+
+Target System: System Dictionary Database
+
+Staging Table: OPER.STG_COGNOS_REPORT_SQL
+
+Final Table: T_RESOURCE_USAGE
+
+Process Steps:
+
+Extract Cognos report SQL queries and store them in OPER.STG_COGNOS_REPORT_SQL.
+
+Move extracted data from the staging table to a snapshot table to be processed by the existing parser.
+
+Parse SQL queries to derive table-level lineage.
+
+Load the parsed metadata into T_RESOURCE_USAGE.
+
+Ensure lineage visibility through UI enhancements.
+
+3.2 Entitlement & Usage UI Enhancements
+
+Re-enable hidden entitlement sections in the Resource screen.
+
+Create new UI components to display usage data for resources.
+
+Allow filtering and categorization of data based on usage types (Visualization, Virtualization, Views).
+
+Ensure seamless integration with the backend for fetching metadata dynamically.
+
+4. Technical Implementation Details
+
+Data Pipeline: Informatica process to extract Cognos data.
+
+Stored Procedure Development: Move data from staging to snapshot tables and prepare it for parsing.
+
+SQL Parsing Engine: Modify the existing parser to extract lineage metadata from SQL queries.
+
+UI Development: Implement enhancements in the Resource screen to support entitlement and usage tracking.
+
+Database Tables Involved:
+
+OPER.STG_COGNOS_REPORT_SQL (Staging Table)
+
+T_RESOURCE_USAGE (Final Metadata Table)
+
+5. Dependencies & Assumptions
+
+Cognos report SQL queries are extractable via Informatica.
+
+The parser engine can be enhanced to support the lineage derivation process.
+
+UI changes should not impact existing functionality.
+
+Proper access controls will be implemented for viewing entitlements and usage data.
+
+6. Expected Deliverables
+
+Fully automated data extraction pipeline for Cognos reports.
+
+Enhanced parser with table lineage extraction capability.
+
+Updated UI with entitlement and usage tracking.
+
+Documentation for implemented changes.
+
+7. Timeline & Milestones
+
+Milestone
+
+Description
+
+Expected Completion
+
+Requirement Analysis
+
+Finalize scope and requirements
+
+DD/MM/YYYY
+
+Development
+
+Implement ETL, parser, and UI changes
+
+DD/MM/YYYY
+
+Testing
+
+Validate pipeline and UI enhancements
+
+DD/MM/YYYY
+
+Deployment
+
+Go-live with new features
+
+DD/MM/YYYY
+
+8. Risks & Mitigation Plan
+
+Data Extraction Failures → Implement logging and error handling.
+
+Parser Incompatibility → Conduct testing on sample SQL queries.
+
+UI Performance Issues → Optimize metadata queries and implement caching mechanisms.
+
+Access Control Issues → Ensure role-based authentication for entitlement visibility.
+
+9. Conclusion
+
+This project aims to streamline Cognos report data extraction and metadata lineage derivation while enhancing entitlement and usage visibility. Successful implementation will improve metadata governance, system traceability, and UI usability.
+
