@@ -1,0 +1,46 @@
+Project Description
+The Platform Team plays a critical role in managing data onboarding, transformation, and distribution across multiple source and target systems. While upstream and downstream teams have their own dashboards to showcase their work, the Platform Team lacks a structured way to present its contributions, even though it is responsible for ensuring smooth data movement.
+
+The Platform View project aims to bridge this gap by developing a dedicated UI/dashboard that provides a visual representation of the different types of work the team handles. The main objective is to design a well-structured user interface where team activities can be recorded and displayed effectively in business, technical, and operational views. This two-month project will focus on designing and developing the UI and data model, with automation for fetching data planned for later phases.
+
+The dashboard will allow manual or UI-based data entry to start with, enabling the team to input key data points regarding data onboarding, ETL pipelines, schema evolution handling, production support, and operational maintenance. The primary goal is to create a clean, structured, and interactive UI that presents this information dynamically.
+
+Key Components:
+Business View – Displays data onboarding statistics, business impact, and team contributions.
+Technical View – Shows data flow diagrams, pipeline processes, and schema change tracking.
+Operational View – Logs issue resolutions, ETL failures, system updates, and downtime analysis.
+
+By the end of the project, a fully functional UI prototype will be delivered, allowing the team to manually input and visualize their work, making their contributions more visible and easier to communicate with stakeholders.
+
+Description of Work to be Delivered by Intern:
+The intern will be responsible for designing and developing the Platform View UI/dashboard, ensuring it effectively represents the work done by the Platform Team. The primary tasks involve UI development, data model creation, and manual data entry integration.
+
+1. UI Development & Design
+🔹 Build an interactive and user-friendly frontend UI using React.js/Angular.
+🔹 Design dashboard components for business, technical, and operational views.
+🔹 Implement data input fields where the team can manually enter and track activities.
+
+2. Data Model & Backend Development
+🔹 Develop a lightweight data model (using SQLite, JSON, or PostgreSQL) to store manually entered data.
+🔹 Create simple APIs (Flask/.NET Core/Node.js) to serve the UI with stored information.
+🔹 Ensure a scalable structure for future automation and integration.
+
+3. Data Visualization & Reporting
+🔹 Integrate charts, tables, and graphs using Chart.js, D3.js, or Power BI.
+🔹 Build a data flow diagram to showcase how data moves across systems.
+🔹 Display incident logs, schema changes, and operational updates visually.
+
+4. Testing & Deployment
+🔹 Test UI components to ensure a smooth user experience.
+🔹 Deploy the prototype in a local/test environment (Azure, AWS, or internal server).
+🔹 Write documentation on UI usage, data input, and future enhancements.
+
+Expected Outcome:
+By the end of the two-month internship, the intern will deliver:
+A fully functional UI prototype with structured data views.
+A basic data model for recording manual entries.
+Graphical representations of key activities, making the team's work more transparent.
+Comprehensive documentation to support further automation in the future.
+
+This project will allow the intern to gain hands-on experience in UI/UX development, data structuring, and visualization, while making a significant impact on improving the visibility of the Platform Team’s work. 🚀
+
