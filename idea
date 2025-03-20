@@ -1,46 +1,38 @@
 Project Description
-The Platform Team plays a critical role in managing data onboarding, transformation, and distribution across multiple source and target systems. While upstream and downstream teams have their own dashboards to showcase their work, the Platform Team lacks a structured way to present its contributions, even though it is responsible for ensuring smooth data movement.
+Modern metadata management systems require automated data lineage extraction to understand how data flows between tables, views, and stored procedures. Column-level lineage tracking helps in data governance, impact analysis, and regulatory compliance. However, traditional rule-based SQL parsing methods are complex, rigid, and do not generalize well across different database platforms.
 
-The Platform View project aims to bridge this gap by developing a dedicated UI/dashboard that provides a visual representation of the different types of work the team handles. The main objective is to design a well-structured user interface where team activities can be recorded and displayed effectively in business, technical, and operational views. This two-month project will focus on designing and developing the UI and data model, with automation for fetching data planned for later phases.
+This project aims to develop an AI-powered lineage extraction model that can infer column-level dependencies from SQL queries and metadata, working offline without APIs. The system will utilize open-source transformer models such as T5-Small, CodeLlama, or MiniLM to predict source-to-target column relationships. By training the model on SQL query patterns, the intern will develop a lineage extraction tool that works independently of third-party APIs.
 
-The dashboard will allow manual or UI-based data entry to start with, enabling the team to input key data points regarding data onboarding, ETL pipelines, schema evolution handling, production support, and operational maintenance. The primary goal is to create a clean, structured, and interactive UI that presents this information dynamically.
+The project will involve:
 
-Key Components:
-Business View – Displays data onboarding statistics, business impact, and team contributions.
-Technical View – Shows data flow diagrams, pipeline processes, and schema change tracking.
-Operational View – Logs issue resolutions, ETL failures, system updates, and downtime analysis.
-
-By the end of the project, a fully functional UI prototype will be delivered, allowing the team to manually input and visualize their work, making their contributions more visible and easier to communicate with stakeholders.
+Training a deep learning model to extract column-level lineage from SQL queries.
+Building an offline AI pipeline to analyze metadata without relying on rule-based parsing.
+Developing a structured output for lineage mappings and storing results in a metadata repository.
+Validating lineage accuracy using real-world SQL queries.
+Integrating lineage extraction insights into metadata governance frameworks.
+This work will enhance metadata traceability, reduce manual effort in lineage extraction, and provide automated SQL-to-lineage mapping for structured and semi-structured databases.
 
 Description of Work to be Delivered by Intern:
-The intern will be responsible for designing and developing the Platform View UI/dashboard, ensuring it effectively represents the work done by the Platform Team. The primary tasks involve UI development, data model creation, and manual data entry integration.
+Metadata lineage tracking is a crucial challenge in SQL-based systems, where stored procedures, views, and queries involve complex transformations. Traditional methods rely on static SQL parsing, which fails to generalize across different database engines (SQL Server, MySQL, PostgreSQL, DB2, Oracle, etc.).
 
-1. UI Development & Design
-🔹 Build an interactive and user-friendly frontend UI using React.js/Angular.
-🔹 Design dashboard components for business, technical, and operational views.
-🔹 Implement data input fields where the team can manually enter and track activities.
+The intern will work on:
 
-2. Data Model & Backend Development
-🔹 Develop a lightweight data model (using SQLite, JSON, or PostgreSQL) to store manually entered data.
-🔹 Create simple APIs (Flask/.NET Core/Node.js) to serve the UI with stored information.
-🔹 Ensure a scalable structure for future automation and integration.
+Training a Transformer-Based Model for SQL Lineage
 
-3. Data Visualization & Reporting
-🔹 Integrate charts, tables, and graphs using Chart.js, D3.js, or Power BI.
-🔹 Build a data flow diagram to showcase how data moves across systems.
-🔹 Display incident logs, schema changes, and operational updates visually.
+Fine-tune T5-Small or CodeLlama on a dataset of SQL queries and expected lineage mappings.
+Generate column-level dependencies by mapping source-to-target transformations.
+Building an Offline Lineage Extraction Tool
 
-4. Testing & Deployment
-🔹 Test UI components to ensure a smooth user experience.
-🔹 Deploy the prototype in a local/test environment (Azure, AWS, or internal server).
-🔹 Write documentation on UI usage, data input, and future enhancements.
+Develop a standalone Python package that can take SQL queries as input and return column lineage mappings.
+Use deep learning rather than traditional SQL parsers for flexibility and accuracy.
+Metadata Storage & Query Insights
 
-Expected Outcome:
-By the end of the two-month internship, the intern will deliver:
-A fully functional UI prototype with structured data views.
-A basic data model for recording manual entries.
-Graphical representations of key activities, making the team's work more transparent.
-Comprehensive documentation to support further automation in the future.
+Store extracted lineage information in a structured format (JSON, SQLite, or Neo4j for visualization).
+Provide SQL metadata insights, such as frequently joined tables, redundant columns, and transformation patterns.
+Validating Model Performance
 
+Compare AI-generated lineage against known metadata mappings.
+Use precision, recall, and accuracy metrics to evaluate the lineage extraction model.
+This project will demonstrate how AI can replace rule-based SQL parsing and automate metadata lineage extraction. The intern’s work will enhance metadata intelligence, making it easier to track data transformations across multiple SQL-based environments.
 This project will allow the intern to gain hands-on experience in UI/UX development, data structuring, and visualization, while making a significant impact on improving the visibility of the Platform Team’s work. 🚀
 
