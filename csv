@@ -1,123 +1,35 @@
-Implementing GenAI for Automatic Column Descriptions
+NFRT Metadata Platform - Problem Statement
+------------------------------------------
 
-Introduction
+In today's distributed data landscape, organizations often struggle with poor visibility into their data ecosystems.
+Without strong metadata management, key challenges emerge that impact trust, governance, and operational efficiency.
 
-The Finance Tech team has come up with a Generative AI (GenAI) feature to automatically fill in column descriptions using metadata. The goal is to make metadata management smoother and more efficient by using AI to do the heavy lifting.
+The problems we aim to solve include:
 
-For our Proof of Concept (POC), they’ve provided a Swagger UI where we can enter input metadata and get back AI-generated column descriptions. But before we send a request, we need to load some relevant metadata into a Vector Database (Vector DB). This includes:
+- Difficulty discovering the right data assets across systems.
+- Poor visibility into how data moves and transforms across layers.
+- Lack of clear ownership and accountability for datasets and processes.
+- Creation of duplicate datasets due to lack of trusted discovery.
+- Time-consuming and manual impact analysis during change management.
+- Gaps in governance, audit readiness, and prevention of duplicate datasets.
 
-Database description
+These challenges lead to operational inefficiencies, delayed decision-making, compliance risks, and poor user trust in data.
+The NFRT Metadata Platform is designed to address these issues by making metadata live, connected, and actionable
 
-Table description
+NFRT Metadata Platform - Final Summary
+--------------------------------------
 
-Schema-level details
+The NFRT Metadata Platform is built to transform metadata from passive documentation into a living, intelligent foundation
+for managing data across NFRT projects.
 
-Any other useful metadata in CSV format
+By continuously collecting business, technical, and operational metadata, it enables:
 
-When we run the API, it generates a CSV file with column descriptions that can be downloaded through a browser link.
+- Faster discovery of trusted datasets.
+- Clear visibility into ownership and transformations.
+- Better collaboration between business and technical teams.
+- Improved governance, audit readiness, and operational awareness.
 
-How It Works
+While firmwide cataloging is handled by FDC using Collibra, our platform complements it by going deeper into NFRT-specific metadata
+and enabling use cases beyond cataloging â€” including lineage, impact analysis, and platform-level insights.
 
-1. Pre-upload Information
-
-Before running the API, we need to upload metadata to the Vector DB. This includes:
-
-Database details
-
-Table details
-
-Schema-level information
-
-Any additional metadata that helps improve descriptions
-
-2. Run-time API Call
-
-At the time of execution, we provide some metadata in the API request:
-
-Column name
-
-Table name
-
-Data type
-
-Common column descriptions (like audit columns that appear across the database)
-
-3. Output
-
-After the API runs, it generates a CSV file that contains:
-
-Column names
-
-AI-generated descriptions
-
-A download link provided in the API response
-
-How We Can Automate This
-
-We explored a couple of ways to automate this process:
-
-Option 1: Use a cURL Command
-
-We can trigger the API using a simple cURL command.
-
-This command will return the CSV file with column descriptions.
-
-The WM team is checking if there’s an easy way to download the file.
-
-Option 2: Store the Output in a Given Path
-
-Instead of downloading manually, we can send a file path along with our API request.
-
-The API process will save the output CSV file to that location.
-
-This makes it easier to access the file later.
-
-We’re waiting for feedback on Option 1 before moving forward with Option 2.
-
-Can We Build Our Own Solution?
-
-Apart from using their API, we looked into building our own tool. Here’s what we would need:
-
-GPT License – To use a language model for generating descriptions.
-
-Vector Database – To store and retrieve metadata context.
-
-Prompt Engineering Scripts – To format metadata properly for AI processing.
-
-Automation Workflow – To upload metadata, process requests, and store outputs.
-
-Right now, they’ve implemented this using Python scripts, which means it’s possible for us to do the same, especially since we have multiple use cases for it.
-
-Tech Stack
-
-Here’s what they are using:
-
-LLM Model: GPT-4
-
-VectorDB: ChromaDB
-
-Embedding Framework: SentenceTransformers
-
-Embedding Model: msmarco-MiniLM-L6-cos-v5
-
-Script Language: Python
-
-UI Framework: Streamlit
-
-They also have external APIs:
-
-vicuna-13b-api.ms.com:80
-
-llama-2-70b-chat-api.ms.com:80
-
-What’s Next?
-
-The POC has successfully generated column descriptions for sample tables. Now, we need to:
-
-Decide on the best automation method (cURL command or path-based storage)
-
-Ensure API responses integrate smoothly into our workflow
-
-Consider whether we should build our own version for more flexibility
-
-Once we finalize these points, we can move ahead with production integration
+In short, NFRT Metadata Platform turns metadata into a strategic asset â€” improving trust, agility, and data-driven decision-making.
