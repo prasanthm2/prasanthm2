@@ -1,41 +1,68 @@
-import pandas as pd
-import chromadb
-from sentence_transformers import SentenceTransformer
 
-# Load metadata from CSV (Assuming a CSV with 'Column Name', 'Table Name', 'Data Type')
-def load_metadata(csv_path):
-    df = pd.read_csv(csv_path)
-    return df
+NFRT Metadata Platform - Full Expo Speaker Notes
+------------------------------------------------
 
-# Initialize ChromaDB client
-def initialize_vector_db():
-    client = chromadb.PersistentClient(path="./vector_db")
-    collection = client.get_or_create_collection(name="metadata")
-    return client, collection
+Slide 1: Problem Statement
+--------------------------
+Today’s organizations deal with highly complex and distributed data environments.
+Without strong metadata management, finding the right data, understanding its quality,
+and trusting its usage becomes very difficult.
 
-# Load SentenceTransformer model
-embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+We face challenges like:
+- Difficulty discovering the right data assets.
+- Poor visibility into how data moves across systems.
+- Lack of clear ownership and accountability for data.
+- Creation of duplicate datasets due to lack of trusted discovery.
+- Time-consuming impact analysis during changes.
+- Gaps in governance, audit readiness, and prevention of duplicate datasets.
 
-def store_metadata_in_vector_db(df, collection):
-    for index, row in df.iterrows():
-        metadata_text = f"Column: {row['Column Name']}, Table: {row['Table Name']}, Type: {row['Data Type']}"
-        embedding = embedding_model.encode(metadata_text).tolist()
-        collection.add(ids=[str(index)], embeddings=[embedding], metadatas=[row.to_dict()])
-    print("Metadata stored successfully in vector DB!")
+These issues delay decision-making, increase risks, and lead to inefficiencies.
+The NFRT Metadata Platform addresses these challenges by making metadata live, connected, and actionable.
 
-# Query the vector DB to retrieve similar metadata
-def query_metadata(query_text, collection, top_k=5):
-    query_embedding = embedding_model.encode(query_text).tolist()
-    results = collection.query(query_embeddings=[query_embedding], n_results=top_k)
-    return results
+Slide 2: Outcomes
+-----------------
+The NFRT Metadata Platform delivers outcomes across business, technology, and governance:
 
-if __name__ == "__main__":
-    csv_path = "metadata.csv"  # Provide your metadata CSV file
-    metadata_df = load_metadata(csv_path)
-    client, collection = initialize_vector_db()
-    store_metadata_in_vector_db(metadata_df, collection)
-    
-    # Example query
-    query_text = "Find details about customer ID column"
-    search_results = query_metadata(query_text, collection)
-    print("Top matching metadata:", search_results)
+- Improved Traceability: End-to-end data flow and transformation visibility.
+- Clear Ownership: Accountability and stewardship for all data assets.
+- Faster Impact Analysis: Quickly assess downstream effects of upstream changes.
+- Proactive Alerts: Early notifications for key data issues.
+- Metadata-Driven Decisions: Confident, faster decision-making based on trusted insights.
+- Continuous Data Quality Monitoring: Tracking freshness, completeness, and usage patterns.
+- Improved Data Discovery: Searchable, trusted datasets with meaningful context.
+- Compliance and Audit Readiness: Metadata history supports governance needs.
+
+Slide 3: Methodology and Solution
+---------------------------------
+The platform operates on four key principles:
+
+- Always On: Continuously collects metadata from databases, ETL pipelines, reporting systems, and repositories.
+- Intelligent: Builds lineage graphs, detects anomalies, and recommends actions.
+- Action-Oriented: Enables alerts, workflows, and real-time insights.
+- Open and Flexible: Connects via direct system access, APIs, and code-based integration.
+
+It delivers capabilities such as:
+- Traceability of data flows.
+- Visibility into data transformations and usage.
+- Ownership mapping and collaboration.
+- Impact analysis and operational awareness.
+- Unified metadata across business, technical, and operational layers.
+
+Slide 4: Final Summary
+----------------------
+The NFRT Metadata Platform is built to transform metadata from passive documentation into a living,
+intelligent foundation for managing data across NFRT projects.
+
+By continuously collecting business, technical, and operational metadata, it enables:
+
+- Faster discovery of trusted datasets.
+- Clear visibility into ownership and transformations.
+- Better collaboration between business and technical teams.
+- Improved governance, audit readiness, and operational awareness.
+
+While firmwide cataloging is handled by FDC using Collibra, our platform complements it by going deeper
+into NFRT-specific metadata and enabling use cases beyond cataloging — including lineage, impact analysis,
+and platform-level insights.
+
+In short, NFRT Metadata Platform turns metadata into a strategic asset — improving trust, agility,
+and data-driven decision-making.
