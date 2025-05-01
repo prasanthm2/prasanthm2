@@ -1,70 +1,28 @@
-Slide 1: Introduction
+# No external libraries needed for core functionality
 
-Automated Column Description Generation
+# Required dependencies for Streamlit app
+streamlit>=1.27.0
+beautifulsoup4>=4.12.0
+pyyaml>=6.0
 
-Our team is integrating a prototype developed by another team to automate the generation of column descriptions.
+# LLM integration dependencies
+groq>=0.4.0
+python-dotenv>=1.0.0
 
-The system leverages LLMs and metadata retrieval to generate business-relevant descriptions for database columns.
+# Optional dependencies for additional features
+# Uncomment if needed:
+graphviz>=0.20.1    # For additional visualization options
+pydot>=1.4.2        # For export to DOT format
+markdown>=3.4.1     # For markdown report generation
 
-This will help streamline our metadata management process and improve documentation consistency.
+# Core dependencies
+pandas
+matplotlib
+networkx
 
-Slide 2: How It Works
+# UI dependencies
+tkinter  # Usually comes with Python
 
-Workflow Overview
-
-Metadata Input – Object metadata (column names, data types, sample values) is provided.
-
-Metadata Retrieval – The system fetches previously generated business concepts and relevant information.
-
-Prompt Construction – The metadata and retrieved data are used to construct a detailed prompt for the LLM.
-
-LLM Processing – The LLM generates business concepts and descriptions based on the prompt.
-
-Storage in Vector Database – The descriptions are stored for future reference and semantic search.
-
-Integration & Analysis – The generated descriptions are reviewed and refined as needed.
-
-Slide 3: Integration with Metadata Repository
-
-How We Use It
-
-The automatically generated descriptions will be stored in our Metadata Repository.
-
-This ensures that each column has a clear, accurate, and standardized description.
-
-The system will allow quick updates and retrieval of descriptions for newly added columns.
-
-Semantic search capabilities will help enhance discoverability and lineage tracking.
-
-Slide 4: Benefits
-
-Key Advantages of Automated Description Generation
-
-✔ Saves Time – Eliminates the manual effort of writing descriptions.
-✔ Ensures Consistency – Uniform terminology across all metadata assets.
-✔ Improves Accuracy – LLM ensures high relevance to business concepts.
-✔ Enhances Searchability – Metadata descriptions can be semantically searched.
-✔ Supports Scalability – Easily adapts to growing datasets and schema changes.
-
-Slide 5: Next Steps
-
-Implementation Plan
-
-✅ Pilot Testing – Run a test on a subset of metadata to validate accuracy.
-
-🔄 Feedback & Refinement – Collect feedback from SMEs and improve prompts.
-
-🚀 Full Integration – Automate the description generation process in the metadata repository.
-
-📊 Monitoring & Optimization – Continuously assess system performance and refine where needed.
-
-Slide 6: Conclusion
-
-The Future of Metadata Management
-
-By leveraging AI-powered description generation, we streamline metadata documentation.
-
-This initiative aligns with our goal of improving metadata governance.
-
-Continuous improvement and feedback loops will ensure high-quality metadata insights.
-
+# Optional dependencies
+PyPDF2>=3.0.0  # For PDF file support
+streamlit>=1.20.0  # For web-based UI 
