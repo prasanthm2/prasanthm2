@@ -1,38 +1,34 @@
-Project Description
-Modern metadata management systems require automated data lineage extraction to understand how data flows between tables, views, and stored procedures. Column-level lineage tracking helps in data governance, impact analysis, and regulatory compliance. However, traditional rule-based SQL parsing methods are complex, rigid, and do not generalize well across different database platforms.
+1. Performance and Impact
+Examples or context:
+Tanisha has consistently delivered quality work throughout her internship. Even though her main role is UI development, she has shown great interest in contributing to backend development too. She is always enthusiastic to learn and takes initiative without waiting for instructions. Whenever the team needed support during critical times, she has stayed late and helped without hesitation. She completes her tasks on time and has met all goals given to her. Tanisha is now one of the key contributors in the team despite being an intern.
 
-This project aims to develop an AI-powered lineage extraction model that can infer column-level dependencies from SQL queries and metadata, working offline without APIs. The system will utilize open-source transformer models such as T5-Small, CodeLlama, or MiniLM to predict source-to-target column relationships. By training the model on SQL query patterns, the intern will develop a lineage extraction tool that works independently of third-party APIs.
+2. Risk and Controls
+Examples or context:
+Tanisha has shown good understanding of our development guidelines and has followed team processes properly. If there is anything she is unsure about, she immediately checks with seniors or raises the point. She works in a clean and structured way, which helps avoid mistakes. She also collaborates with other team members smoothly, especially when it comes to debugging and understanding edge cases.
 
-The project will involve:
+3. Culture and Values
+Examples or context:
+Tanisha is always respectful to others and is a good team player. She is open to feedback and never hesitates to ask for help when needed. She adjusts well in the team and maintains a positive attitude. She takes ownership of her tasks and completes them without delay. She also contributes to group discussions and shares ideas when needed.
 
-Training a deep learning model to extract column-level lineage from SQL queries.
-Building an offline AI pipeline to analyze metadata without relying on rule-based parsing.
-Developing a structured output for lineage mappings and storing results in a metadata repository.
-Validating lineage accuracy using real-world SQL queries.
-Integrating lineage extraction insights into metadata governance frameworks.
-This work will enhance metadata traceability, reduce manual effort in lineage extraction, and provide automated SQL-to-lineage mapping for structured and semi-structured databases.
+4. Professional Development
+Advice or feedback:
+Tanisha is already doing a great job as an intern. One suggestion would be to continue exploring new technologies and frameworks related to both UI and backend. With her interest and dedication, she can grow into a strong full-time developer. Also, if possible, she can start participating in technical design discussions to further improve her understanding.
 
-Description of Work to be Delivered by Intern:
-Metadata lineage tracking is a crucial challenge in SQL-based systems, where stored procedures, views, and queries involve complex transformations. Traditional methods rely on static SQL parsing, which fails to generalize across different database engines (SQL Server, MySQL, PostgreSQL, DB2, Oracle, etc.).
+Overall Assessment
+1. Performance and Impact:
+Tanisha has contributed very well to the success of our project. She has taken ownership of her tasks and has shown that she can handle both frontend and backend responsibilities. Her performance has exceeded expectations, and she has quickly adapted to our working style and goals.
 
-The intern will work on:
+Rating: Delivers exceptional results
 
-Training a Transformer-Based Model for SQL Lineage
+2. Risk and Controls:
+Tanisha works responsibly and makes sure to follow all standard procedures. She communicates clearly and asks whenever something is unclear, which reduces any chances of mistakes. She maintains quality in her work and shows care in testing and delivery.
 
-Fine-tune T5-Small or CodeLlama on a dataset of SQL queries and expected lineage mappings.
-Generate column-level dependencies by mapping source-to-target transformations.
-Building an Offline Lineage Extraction Tool
+Rating: Delivers strong results
 
-Develop a standalone Python package that can take SQL queries as input and return column lineage mappings.
-Use deep learning rather than traditional SQL parsers for flexibility and accuracy.
-Metadata Storage & Query Insights
+3. Culture and Values:
+Tanisha is a very respectful and reliable team member. She supports her teammates, takes initiative, and always behaves professionally. Even as an intern, she shows maturity and team spirit. She blends well into the company culture and is a good example for new joiners.
 
-Store extracted lineage information in a structured format (JSON, SQLite, or Neo4j for visualization).
-Provide SQL metadata insights, such as frequently joined tables, redundant columns, and transformation patterns.
-Validating Model Performance
+Rating: Delivers exceptional results
 
-Compare AI-generated lineage against known metadata mappings.
-Use precision, recall, and accuracy metrics to evaluate the lineage extraction model.
-This project will demonstrate how AI can replace rule-based SQL parsing and automate metadata lineage extraction. The intern’s work will enhance metadata intelligence, making it easier to track data transformations across multiple SQL-based environments.
-This project will allow the intern to gain hands-on experience in UI/UX development, data structuring, and visualization, while making a significant impact on improving the visibility of the Platform Team’s work. 🚀
-
+Explanation for conversion decision:
+I strongly recommend converting Tanisha to a full-time role. She has proven her capabilities by consistently delivering quality work and showing strong commitment to the team. She takes responsibility, learns quickly, and contributes in all areas—not just UI. She has become an important part of the team and is ready for full-time responsibilities.
