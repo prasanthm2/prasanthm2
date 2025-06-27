@@ -1,55 +1,26 @@
-Dashboard Overview:
+1. Performance & Impact
+Definition: The impact of your individual contributions as it relates to the success of your team, your business, the Firm, and our clients.
 
-Display key metrics and statistics about the system dictionary, such as the total number of projects, databases, data quality indicators, etc.
-Use charts and graphs to visually represent metadata distribution and coverage across different sources and types.
-Provide quick links to other important screens and sections of the application.
-Metadata Search and Browse:
+✅ Suggested Goal for Intern under Performance & Impact:
+Goal:
+Design and develop the "PlatformView" user interface to visualize key metrics from ETL operations, including Jira progress, metadata summaries, and data load statistics, ensuring clear visibility into the team's overall impact.
 
-Implement a search bar to allow users to search for specific metadata elements using keywords or filters.
-Display search results in a table or list format, showing essential metadata details like table names, column names, etc.
-Enable browsing of metadata hierarchies through expandable/collapsible tree views or breadcrumb navigation.
-Data Quality Monitoring:
+Status Updates / Notes (initial entry):
+Initial setup completed: project scope defined, tech stack finalized (React + DB2), and design prototypes reviewed. Development underway to implement the core dashboards for Jira tracking, metadata metrics, and data volume summary. Expected to complete core features within internship duration.
 
-Show data quality scores and indicators with color-coded visual cues for quick assessment.
-Provide the ability to drill down into specific data quality issues and view detailed reports.
-Allow users to set thresholds and receive alerts when data quality falls below acceptable levels.
-Data Lineage Visualization:
+Let me also suggest one for 2. Risk & Controls (seen in the second section):
 
-Display data lineage as a visual flowchart or directed graph, showing data flow and transformations.
-Provide options to filter and focus on specific data elements or workflows.
-Allow users to click on nodes to view detailed lineage information and metadata properties.
-Metadata Change History:
+✅ Suggested Goal under Risk & Controls:
+Goal:
+Follow development best practices and coding standards to ensure PlatformView adheres to firm policies around data handling, access control, and UI reliability.
 
-Show a timeline or log of metadata changes, highlighting the most recent updates.
-Enable users to compare different versions of metadata elements.
-Implement a version control system to manage metadata changes.
-Data Access and Permissions:
+Status Updates / Notes (initial entry):
+Using Git for version control. Code reviewed periodically by mentor. No sensitive data exposed in the UI. Follows secure coding guidelines and minimal access to DB.
 
-Design an interface to manage user roles and permissions for accessing and editing metadata.
-Provide clear visibility into who has access to what data elements.
-Allow administrators to set role-based access controls.
-Data Dictionary Glossary:
+Would you like a third goal for Learning & Development, if that’s available on you
 
-Organize technical terms and business definitions in an alphabetically sorted glossary.
-Provide search and filtering options for users to find specific terms quickly.
-Allow users to click on terms to view detailed definitions and related metadata.
-Alerts and Notifications:
+Q5: Brief Synopsis
+Tanisha took full ownership of the UI part of our Metadata Platform and rebuilt it completely. Along with that, she also contributed to backend work by building pipelines and generic APIs. She is always ready to learn and help, and her work has received appreciation from many team leads.
 
-Create a notification center to manage alerts and notifications.
-Allow users to subscribe to specific events or data quality triggers.
-Provide options to customize notification preferences.
-Data Compliance and Regulatory Reports:
-
-Design a reporting interface to generate compliance reports.
-Include data governance statistics and evidence of adherence to regulations.
-Allow exporting reports in various formats (e.g., PDF, CSV).
-Data Usage Analytics:
-
-Create visualizations and charts to represent data usage patterns and access frequencies.
-Enable filtering and grouping options for data analysis.
-Show most accessed or popular data elements.
-Data Impact Analysis:
-
-Design an interactive impact analysis tool to visualize dependencies between metadata elements.
-Enable users to explore how changes to one element can affect others.
-Provide a summary of the impact and potential risks.
+Q6: Impact of this contribution
+Tanisha gave the Metadata Platform a fresh and user-friendly UI, fully developed by her. Apart from front-end, she also provided smart backend solutions like creating pipelines for triple conversion and reusable endpoints to handle metadata. She is very proactive, stays back during important releases, and supports the team whenever needed. She also keeps the team connected by organizing fun events, team lunches, and weekly catchups. Her contribution has improved both the product and the team’s culture.
