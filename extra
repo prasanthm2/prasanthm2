@@ -1,37 +1,96 @@
-WITH DateRange AS (
-    -- Generate a sequence of dates within the required range
-    SELECT DISTINCT CAST(RUN_DATE AS DATE) AS Date
-    FROM DICT.T_PROCESS_RUN_AUDIT_LOG
-    WHERE RUN_DATE BETWEEN '2024-08-01' AND '2024-08-31'  -- Set the date range as required
-),
-ExpectedRuns AS (
-    -- Expected number of runs for each job key and resource key
-    SELECT 
-        r.RSRC_KY,
-        r.PROCESS_KY,
-        COUNT(d.Date) AS Expected_Days
-    FROM DICT.T_PROCESS_RUN_AUDIT_LOG r
-    CROSS JOIN DateRange d
-    GROUP BY r.RSRC_KY, r.PROCESS_KY
-),
-ActualRuns AS (
-    -- Actual number of runs for each job key and resource key
-    SELECT 
-        RSRC_KY,
-        PROCESS_KY,
-        COUNT(DISTINCT RUN_DATE) AS Actual_Days
-    FROM DICT.T_PROCESS_RUN_AUDIT_LOG
-    WHERE RUN_DATE BETWEEN '2024-08-01' AND '2024-08-31'  -- Set the date range as required
-    GROUP BY RSRC_KY, PROCESS_KY
-)
--- Calculate the Freshness Score
-SELECT 
-    e.RSRC_KY,
-    e.PROCESS_KY,
-    e.Expected_Days,
-    a.Actual_Days,
-    (CAST(a.Actual_Days AS FLOAT) / e.Expected_Days) * 100 AS Freshness_Score
-FROM ExpectedRuns e
-LEFT JOIN ActualRuns a 
-    ON e.RSRC_KY = a.RSRC_KY AND e.PROCESS_KY = a.PROCESS_KY
-ORDER BY e.RSRC_KY, e.PROCESS_KY;
+🏗️ Design & Implementation Plan for CaSC Upload (Intermediary Approach)
+✅ Phase 1: Foundation Setup (Pilot with Non-Sensitive System)
+1. System Selection
+Choose a system with:
+
+No PII/SDE
+
+Simple data structures
+
+Stable metadata already present in your metadata platform
+Example: Internal reporting system, static lookup data source
+
+2. Manifest Generation Logic
+Build a script (Python preferred) to:
+
+Read metadata from your platform
+
+Generate CaSC-compliant YAML/JSON manifest
+
+Validate against FDC format specs
+
+Drop to predefined /intermediary/NFS/location
+
+3. Folder Structure
+bash
+Copy
+Edit
+/intermediary/NFS/location/
+  └── system_name/
+        └── manifest_YYYYMMDD.yaml
+4. Validation & Coordination with FDC Team
+Share the manifest with FDC for review.
+
+Get it whitelisted for polling.
+
+Trigger a dry run (check ingestion by FDC CaSC Tool).
+
+🚀 Phase 2: Expand to More Systems (Still Good Citizen)
+1. Automation
+Automate manifest generation for 2–3 more systems.
+
+Schedule jobs (hourly/daily) for refreshing and uploading manifests.
+
+2. Monitoring & Logging
+Log upload status
+
+Monitor NFS path usage and FDC polling success/failure
+
+3. Document Learnings
+Maintain a checklist per system:
+
+Attributes present
+
+Gaps
+
+Transformations applied
+
+Upload result
+
+🔒 Phase 3: Governance-Ready Metadata
+1. Assess Governance Gaps
+Start identifying:
+
+Missing SDE
+
+PII tagging needs
+
+Business glossary or classifications
+
+2. Update Metadata Models
+Enrich your metadata store to include required governance fields.
+
+Create mapping/lookup tables for department, stewardship, ownership, etc.
+
+3. Phase-wise Rollout
+For each system, tag the governance level:
+
+🚦Level 0: Basic Metadata (Good Citizen)
+
+🚦Level 1: SDE/PII present
+
+🚦Level 2: Fully governed (linked to policy, lineage, glossary)
+
+🛠️ Technical Artifacts Needed
+Component	Description
+manifest_generator.py	Script to create CaSC manifest from your metadata model
+config.yaml	Metadata mapping config (source field → CaSC field)
+upload_job.sh	Shell or scheduler job to copy manifest to NFS
+log_uploads.log	Logging file for manifest generation and upload result
+manifest_sample.yaml	Sample FDC-approved manifest for reference
+
+📌 Governance Alignment Tracker (Sample Template)
+System	SDE Present	PII Present	Cataloged	Notes
+System A	❌	❌	✅	First pilot
+System B	✅	❌	❌	Next phase
+System C	✅	✅	❌	Final rollout
