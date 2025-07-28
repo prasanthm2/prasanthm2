@@ -1,7 +1,76 @@
-Hi [Manager’s Name],
+✅ Main Requirements for Metadata Platform (3–4 Months)
+Crawlers
 
-Thank you for the opportunity to discuss my compensation and career progression.
+Existing Talend jobs for DB2 and SQL Server
 
-After considering my experience, current responsibilities, and industry benchmarks, I believe a CTC of ₹45 lakhs per annum would be appropriate and in line with my role and contributions to the team.
+Need to add for PostgreSQL, Snowflake, Neo4j, etc.
 
-I appreciate your support and consideration, and I look forward to your response.
+Swagger UI
+
+Expose metadata APIs
+
+Full Swagger UI development for consumers
+
+Gen AI Implementation
+
+Auto-generate descriptions and labels
+
+Use vector store for semantic search
+
+Derive lineage from XMLs
+
+Generate summaries
+
+Create a platform to handle multiple Gen AI use cases (as backend services)
+
+Data Quality Integration
+
+Integrate with multiple data quality tools
+
+👨‍💻 Developer-Wise Work Summary
+🔹 Full Stack Developer
+Develop REST APIs for metadata (tables, columns, jobs, glossary, lineage)
+
+Set up and complete Swagger UI for all APIs
+
+Build/enhance UI (React/Angular):
+
+Global search and filter
+
+Metadata detail pages
+
+Lineage visualization (graph/tree)
+
+Display existing metadata fields and API responses
+
+Add authentication and security for API access
+
+🔹 Data Engineer
+Build new Talend or script-based crawlers for:
+
+PostgreSQL
+
+Snowflake
+
+Neo4j
+
+Apply standard metadata structure and implement SCD2 logic
+
+Ensure run metadata and job info are captured
+
+Integrate with one or more data quality tools (e.g., Great Expectations)
+
+Build ingestion logic for DQ metrics (null %, duplicates, rule violations)
+
+🔹 Gen AI Expert
+Build Gen AI solution for auto-generating descriptions and labels
+
+Parse ETL XMLs to derive column-level lineage
+
+Generate summaries for jobs or platforms
+
+Set up and manage a vector store (e.g., FAISS or Chroma)
+
+Expose all Gen AI functionalities as backend services (no UI integration)
+
+Ensure outputs are stored in metadata tables or served via APIs for other services to consume
