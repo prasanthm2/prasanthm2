@@ -1,96 +1,37 @@
-🏗️ Design & Implementation Plan for CaSC Upload (Intermediary Approach)
-✅ Phase 1: Foundation Setup (Pilot with Non-Sensitive System)
-1. System Selection
-Choose a system with:
+1. Performance and Impact
+Examples or context:
+Prateek joined us only for two months as part of his final-year internship, but in that short time, he did a really good job. He worked on the PlatformView application and was able to complete the work given to him on time without much follow-up. He understood the task quickly, and even though the application was new for him, he was able to handle it well. He showed good focus and did his part with full responsibility.
 
-No PII/SDE
+2. Risk and Controls
+Examples or context:
+Even though it was a short internship, Prateek followed all our coding practices and team standards properly. He didn’t hesitate to ask when he had any doubts, which helped him avoid mistakes. He made sure his code was neat and tested before giving it for review. Overall, he was very careful with the work and followed the process well.
 
-Simple data structures
+3. Culture and Values
+Examples or context:
+Prateek was very respectful and easy to work with. He blended well with the team, even in just a short time. He was always ready to learn and accepted feedback in a positive way. He showed a good attitude and team spirit. For someone who joined newly and was here for just two months, he adjusted quickly and worked well with everyone.
 
-Stable metadata already present in your metadata platform
-Example: Internal reporting system, static lookup data source
+4. Professional Development
+Advice or feedback:
+Prateek is just getting started in his career, but the way he approached this internship shows that he has good potential. Once he finishes college, he should continue learning and explore other areas like backend too. If he keeps the same attitude and effort, I’m sure he will become a very good developer. Looking forward to working with him again in the future.
 
-2. Manifest Generation Logic
-Build a script (Python preferred) to:
+Overall Assessment
+1. Performance and Impact:
+He completed the given work on time and handled it independently after getting the initial understanding. He made a good contribution to the PlatformView project even in just two months.
 
-Read metadata from your platform
+Rating: Delivers strong results
 
-Generate CaSC-compliant YAML/JSON manifest
+2. Risk and Controls:
+He followed team guidelines well and made sure his work was properly reviewed and tested. He didn’t take shortcuts and was careful with the quality.
 
-Validate against FDC format specs
+Rating: Delivers strong results
 
-Drop to predefined /intermediary/NFS/location
+3. Culture and Values:
+Prateek was friendly, polite, and easy to work with. He got along well with the team and was serious about his work. He has the right attitude for a team environment.
 
-3. Folder Structure
-bash
-Copy
-Edit
-/intermediary/NFS/location/
-  └── system_name/
-        └── manifest_YYYYMMDD.yaml
-4. Validation & Coordination with FDC Team
-Share the manifest with FDC for review.
+Rating: Delivers strong results
 
-Get it whitelisted for polling.
+Explanation for your current decision:
+Prateek did a good job in this short internship. Since he is in his final year, he will now go back and complete his studies. But based on how he worked here, I feel he will be a strong candidate to rejoin after college. He has shown good learning ability, ownership, and a positive mindset.
 
-Trigger a dry run (check ingestion by FDC CaSC Tool).
 
-🚀 Phase 2: Expand to More Systems (Still Good Citizen)
-1. Automation
-Automate manifest generation for 2–3 more systems.
-
-Schedule jobs (hourly/daily) for refreshing and uploading manifests.
-
-2. Monitoring & Logging
-Log upload status
-
-Monitor NFS path usage and FDC polling success/failure
-
-3. Document Learnings
-Maintain a checklist per system:
-
-Attributes present
-
-Gaps
-
-Transformations applied
-
-Upload result
-
-🔒 Phase 3: Governance-Ready Metadata
-1. Assess Governance Gaps
-Start identifying:
-
-Missing SDE
-
-PII tagging needs
-
-Business glossary or classifications
-
-2. Update Metadata Models
-Enrich your metadata store to include required governance fields.
-
-Create mapping/lookup tables for department, stewardship, ownership, etc.
-
-3. Phase-wise Rollout
-For each system, tag the governance level:
-
-🚦Level 0: Basic Metadata (Good Citizen)
-
-🚦Level 1: SDE/PII present
-
-🚦Level 2: Fully governed (linked to policy, lineage, glossary)
-
-🛠️ Technical Artifacts Needed
-Component	Description
-manifest_generator.py	Script to create CaSC manifest from your metadata model
-config.yaml	Metadata mapping config (source field → CaSC field)
-upload_job.sh	Shell or scheduler job to copy manifest to NFS
-log_uploads.log	Logging file for manifest generation and upload result
-manifest_sample.yaml	Sample FDC-approved manifest for reference
-
-📌 Governance Alignment Tracker (Sample Template)
-System	SDE Present	PII Present	Cataloged	Notes
-System A	❌	❌	✅	First pilot
-System B	✅	❌	❌	Next phase
-System C	✅	✅	❌	Final rollout
+Prateek has shown good promise during his short internship with us. His timely delivery, commitment to learning, and team-friendly nature make him a dependable contributor. If given more time, he will be able to take on more responsibilities confidently. I would support his extension or conversion based on project needs and available opportunities.
