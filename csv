@@ -1,76 +1,115 @@
-✅ Main Requirements for Metadata Platform (3–4 Months)
-Crawlers
+import os
+import sys
+import ollama
 
-Existing Talend jobs for DB2 and SQL Server
+# ============ CONFIG ============
+SUPPORTED_EXTENSIONS = ['.py', '.sql', '.yaml', '.yml', '.xml', '.json', '.txt']
+MAX_TOKENS = 800
+MODEL_NAME = 'phi'  # You can change this to your preferred model
 
-Need to add for PostgreSQL, Snowflake, Neo4j, etc.
+# ============ CORE FUNCTIONS ============
 
-Swagger UI
+def truncate_content(content, max_tokens=MAX_TOKENS):
+    lines = content.splitlines()
+    tokens = 0
+    result = []
+    for line in lines:
+        line_tokens = len(line.split())
+        if tokens + line_tokens > max_tokens:
+            break
+        result.append(line)
+        tokens += line_tokens
+    return "\n".join(result)
 
-Expose metadata APIs
+def summarize_file(file_path):
+    ext = os.path.splitext(file_path)[1].lower()
+    if ext not in SUPPORTED_EXTENSIONS:
+        return None, None
 
-Full Swagger UI development for consumers
+    try:
+        with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+            content = f.read()
+    except Exception as e:
+        return None, f"- ⚠ Could not read {file_path}: {e}"
 
-Gen AI Implementation
+    if not content.strip():
+        return None, f"- ⚠ {os.path.basename(file_path)} is empty or unreadable."
 
-Auto-generate descriptions and labels
+    truncated = truncate_content(content)
 
-Use vector store for semantic search
+    prompt = (
+        f"You are a software deployment documentation assistant.\n"
+        f"Summarize the following file in a professional way for deployment documentation.\n"
+        f"Provide two things:\n"
+        f"1. A very short consolidated summary (1 line max).\n"
+        f"2. A detailed high-level summary in 3–4 bullet points explaining the main functionality, logic, or purpose.\n\n"
+        f"Filename: {os.path.basename(file_path)}\n\n"
+        f"Content:\n{truncated}\n\n"
+        f"Respond ONLY in this format:\n"
+        f"Consolidated Summary: <one-line summary>\n"
+        f"Detailed Summary:\n"
+        f"- Point 1\n- Point 2\n- Point 3\n- Optional Point 4"
+    )
 
-Derive lineage from XMLs
+    try:
+        response = ollama.chat(model=MODEL_NAME, messages=[{"role": "user", "content": prompt}], timeout=120)
+        text = response['message']['content'].strip()
 
-Generate summaries
+        consolidated_line = ""
+        detailed_block = ""
 
-Create a platform to handle multiple Gen AI use cases (as backend services)
+        for line in text.splitlines():
+            if line.startswith("Consolidated Summary:"):
+                consolidated_line = line.replace("Consolidated Summary:", "").strip()
+            elif line.startswith("- "):
+                detailed_block += line + "\n"
 
-Data Quality Integration
+        return consolidated_line, f"{os.path.basename(file_path)}:\n{detailed_block.strip()}\n{'-' * 60}"
+    except Exception as e:
+        return None, f"- ⚠ Error summarizing {file_path}: {e}"
 
-Integrate with multiple data quality tools
+def summarize_directory(directory_path):
+    consolidated = []
+    detailed = []
 
-👨‍💻 Developer-Wise Work Summary
-🔹 Full Stack Developer
-Develop REST APIs for metadata (tables, columns, jobs, glossary, lineage)
+    for root, _, files in os.walk(directory_path):
+        for fname in files:
+            full_path = os.path.join(root, fname)
+            cons, detail = summarize_file(full_path)
+            if cons:
+                consolidated.append(f"{fname}: {cons}")
+            if detail:
+                detailed.append(detail)
 
-Set up and complete Swagger UI for all APIs
+    consolidated_summary = "===== 📌 CONSOLIDATED SUMMARY =====\n" + "\n".join(consolidated)
+    detailed_summary = "\n\n===== 📄 DETAILED SUMMARY =====\n" + "\n\n".join(detailed)
 
-Build/enhance UI (React/Angular):
+    return f"{consolidated_summary}\n\n{detailed_summary}"
 
-Global search and filter
+# ============ MAIN FUNCTION ============
 
-Metadata detail pages
+def main():
+    if len(sys.argv) != 2:
+        print("Usage: python generate_summary.py <directory_path>")
+        sys.exit(1)
 
-Lineage visualization (graph/tree)
+    directory = sys.argv[1]
 
-Display existing metadata fields and API responses
+    if not os.path.isdir(directory):
+        print(f"❌ Error: '{directory}' is not a valid directory.")
+        sys.exit(1)
 
-Add authentication and security for API access
+    print(f"📂 Processing directory: {directory}")
+    summary = summarize_directory(directory)
 
-🔹 Data Engineer
-Build new Talend or script-based crawlers for:
+    output_file = os.path.join(directory, "deployment_summary.txt")
+    with open(output_file, 'w', encoding='utf-8') as f:
+        f.write(summary)
 
-PostgreSQL
+    print(f"✅ Summary written to: {output_file}")
 
-Snowflake
+if __name__ == "__main__":
+    # Optional: force CPU-only execution
+    os.environ["OLLAMA_NUM_GPU_LAYERS"] = "0"
 
-Neo4j
-
-Apply standard metadata structure and implement SCD2 logic
-
-Ensure run metadata and job info are captured
-
-Integrate with one or more data quality tools (e.g., Great Expectations)
-
-Build ingestion logic for DQ metrics (null %, duplicates, rule violations)
-
-🔹 Gen AI Expert
-Build Gen AI solution for auto-generating descriptions and labels
-
-Parse ETL XMLs to derive column-level lineage
-
-Generate summaries for jobs or platforms
-
-Set up and manage a vector store (e.g., FAISS or Chroma)
-
-Expose all Gen AI functionalities as backend services (no UI integration)
-
-Ensure outputs are stored in metadata tables or served via APIs for other services to consume
+    main()
