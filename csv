@@ -1,115 +1,30 @@
-import os
-import sys
-import ollama
+===============================================================================
+DEPLOYMENT CONTENT ANALYSIS SUMMARY
+===============================================================================
 
-# ============ CONFIG ============
-SUPPORTED_EXTENSIONS = ['.py', '.sql', '.yaml', '.yml', '.xml', '.json', '.txt']
-MAX_TOKENS = 800
-MODEL_NAME = 'phi'  # You can change this to your preferred model
+Directory: database
+Total files analyzed: 3
 
-# ============ CORE FUNCTIONS ============
+DEPLOYMENT OVERVIEW:
+----------------------------------------
+Multiple database components are getting deployed: 1 stored procedure, 1 view, 1 table modification.
 
-def truncate_content(content, max_tokens=MAX_TOKENS):
-    lines = content.splitlines()
-    tokens = 0
-    result = []
-    for line in lines:
-        line_tokens = len(line.split())
-        if tokens + line_tokens > max_tokens:
-            break
-        result.append(line)
-        tokens += line_tokens
-    return "\n".join(result)
+DETAILED COMPONENT ANALYSIS:
+----------------------------------------
 
-def summarize_file(file_path):
-    ext = os.path.splitext(file_path)[1].lower()
-    if ext not in SUPPORTED_EXTENSIONS:
-        return None, None
+DATABASE COMPONENTS:
+SP 1: create_proc.sql
+  → The file at path 'C:\Users\mhase\Downloads\deployment_package\database\create_proc.sql' is a stored procedure that creates an aggregated view of employee information by department. It includes a loop statement and a print statement for logging purposes, but the main functionality is the SELECT statement that retrieves the necessary data from two tables using the INNER JOIN clause.
 
-    try:
-        with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
-            content = f.read()
-    except Exception as e:
-        return None, f"- ⚠ Could not read {file_path}: {e}"
+View 1: create_view.sql
+  → This SQL code creates a new table that shows information about active employees, including their ID, name, department name, join date, and whether or not they are active. The purpose of this view is to facilitate easy data retrieval for management purposes.
 
-    if not content.strip():
-        return None, f"- ⚠ {os.path.basename(file_path)} is empty or unreadable."
+Table Mod 1: alter_table.sql
+  → The file at path 'C:\Users\mhase\Downloads\deployment_package\database\alter_table.sql' is a table modification that adds two new columns to the Employees table, namely Email and LastLogin, with their respective data types as NVARCHAR(255) and DATETIME.
 
-    truncated = truncate_content(content)
-
-    prompt = (
-        f"You are a software deployment documentation assistant.\n"
-        f"Summarize the following file in a professional way for deployment documentation.\n"
-        f"Provide two things:\n"
-        f"1. A very short consolidated summary (1 line max).\n"
-        f"2. A detailed high-level summary in 3–4 bullet points explaining the main functionality, logic, or purpose.\n\n"
-        f"Filename: {os.path.basename(file_path)}\n\n"
-        f"Content:\n{truncated}\n\n"
-        f"Respond ONLY in this format:\n"
-        f"Consolidated Summary: <one-line summary>\n"
-        f"Detailed Summary:\n"
-        f"- Point 1\n- Point 2\n- Point 3\n- Optional Point 4"
-    )
-
-    try:
-        response = ollama.chat(model=MODEL_NAME, messages=[{"role": "user", "content": prompt}], timeout=120)
-        text = response['message']['content'].strip()
-
-        consolidated_line = ""
-        detailed_block = ""
-
-        for line in text.splitlines():
-            if line.startswith("Consolidated Summary:"):
-                consolidated_line = line.replace("Consolidated Summary:", "").strip()
-            elif line.startswith("- "):
-                detailed_block += line + "\n"
-
-        return consolidated_line, f"{os.path.basename(file_path)}:\n{detailed_block.strip()}\n{'-' * 60}"
-    except Exception as e:
-        return None, f"- ⚠ Error summarizing {file_path}: {e}"
-
-def summarize_directory(directory_path):
-    consolidated = []
-    detailed = []
-
-    for root, _, files in os.walk(directory_path):
-        for fname in files:
-            full_path = os.path.join(root, fname)
-            cons, detail = summarize_file(full_path)
-            if cons:
-                consolidated.append(f"{fname}: {cons}")
-            if detail:
-                detailed.append(detail)
-
-    consolidated_summary = "===== 📌 CONSOLIDATED SUMMARY =====\n" + "\n".join(consolidated)
-    detailed_summary = "\n\n===== 📄 DETAILED SUMMARY =====\n" + "\n\n".join(detailed)
-
-    return f"{consolidated_summary}\n\n{detailed_summary}"
-
-# ============ MAIN FUNCTION ============
-
-def main():
-    if len(sys.argv) != 2:
-        print("Usage: python generate_summary.py <directory_path>")
-        sys.exit(1)
-
-    directory = sys.argv[1]
-
-    if not os.path.isdir(directory):
-        print(f"❌ Error: '{directory}' is not a valid directory.")
-        sys.exit(1)
-
-    print(f"📂 Processing directory: {directory}")
-    summary = summarize_directory(directory)
-
-    output_file = os.path.join(directory, "deployment_summary.txt")
-    with open(output_file, 'w', encoding='utf-8') as f:
-        f.write(summary)
-
-    print(f"✅ Summary written to: {output_file}")
-
-if __name__ == "__main__":
-    # Optional: force CPU-only execution
-    os.environ["OLLAMA_NUM_GPU_LAYERS"] = "0"
-
-    main()
+BUSINESS IMPACT:
+This deployment establishes a comprehensive data management system with:
+- Enhanced database views for reporting capabilities
+- Automated daily data processing workflows
+- Structured pipeline configuration for ongoing operations
+- Improved data storage and retrieval mechanisms
