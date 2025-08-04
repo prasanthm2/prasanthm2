@@ -1,35 +1,249 @@
-1. Performance and Impact
-Examples or context:
-Prateek joined us for a short two-month internship as part of his final-year college program, and during this period, he made a strong impact with his work. He was assigned to the PlatformView project, which involves UI development to visualize various metadata and ETL-related statistics. Even though it was his first time working on this kind of project, he was quick to understand the requirements and start contributing. He managed to complete the full set of assigned tasks within the timeline, with minimal follow-ups needed. He asked relevant questions early on and then worked independently. His ability to grasp the context quickly and deliver his part with full ownership was impressive, especially for someone who had only two months with the team.
+#!/usr/bin/env python3
+import os
+import argparse
+import time
+import re
+from collections import defaultdict
 
-2. Risk and Controls
-Examples or context:
-Despite being here for a short time, Prateek showed good awareness when it came to following team coding standards and development practices. He was careful not to make assumptions and always clarified doubts to ensure he was building things the right way. He followed version control protocols properly, tested his changes before raising them for review, and responded well to feedback from the reviewers. His code was structured neatly and aligned with the quality we expect in the team. He didn’t rush through tasks and showed seriousness in delivering his part responsibly, which reduced any risk of rework or issues later. That discipline in such a short time shows maturity.
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
-3. Culture and Values
-Examples or context:
-Prateek quickly became part of the team even though he had limited time with us. He was polite, respectful, and open to feedback from day one. He participated in team discussions and never hesitated to ask questions or help others when needed. He maintained a positive and professional attitude throughout the internship. Even in team calls or discussions, he was attentive and made sure he was aligned with the team’s progress. He gelled well with teammates and showed that he’s not just technically sound but also a good fit for team culture. For someone doing a two-month internship, the comfort level and professionalism he brought in was really good.
+SUPPORTED_EXTENSIONS = ['.py', '.sql', '.yaml', '.yml', '.xml', '.json', '.jil']
+DEFAULT_MODEL_DIR = r"D:\muneeb files\summary script\Phi-3-mini-4k-instruct"
+MAX_PROMPT_CHARS = 2000
+GEN_MAX_TOKENS = 150
 
-4. Professional Development
-Advice or feedback:
-Prateek is at the beginning of his professional journey, and in these two months, he has shown good learning attitude and ownership. My suggestion for him going forward is to continue exploring more technical areas, especially backend systems or database work, to build a full-stack understanding. He has strong basics and the right mindset, so if he continues with this curiosity and consistency, he will surely grow into a dependable and skilled developer. After completing college, he should try to get involved in more design discussions and larger problem-solving scenarios to further sharpen his skills. We would be happy to see him come back and grow further with the team.
+torch.set_num_threads(1)
 
-Overall Assessment
-1. Performance and Impact:
-Prateek handled all assigned responsibilities efficiently during his short internship. His contribution to the PlatformView application was focused, timely, and of good quality. He understood the goal quickly and worked with minimal supervision. Even though he had only two months with us, he made his presence felt through responsible execution and clarity in work.
 
-Rating: Delivers strong results
+def classify_sql(content):
+    up = content.upper()
+    if re.search(r'\bCREATE\s+PROCEDURE\b', up) or re.search(r'\bCREATE\s+FUNCTION\b', up):
+        return "Stored Procedure"
+    if re.search(r'\bCREATE\s+VIEW\b', up):
+        return "View"
+    if re.search(r'\bALTER\s+TABLE\b', up):
+        return "Table Modification"
+    return "Other SQL"
 
-2. Risk and Controls:
-He followed team guidelines and standards properly. He took care of testing and validation before delivery, made sure to clarify any uncertainties early, and maintained clean coding habits. For someone new, this level of attention to detail was really good to see.
 
-Rating: Delivers strong results
+def classify_file(path, content):
+    ext = os.path.splitext(path)[1].lower()
+    if ext == '.sql':
+        return classify_sql(content)
+    elif ext == '.py':
+        return "Data Processing"
+    elif ext == '.jil':
+        return "Job Scheduling"
+    elif ext in ('.yaml', '.yml'):
+        return "Configuration"
+    else:
+        return "Other"
 
-3. Culture and Values:
-Prateek was a respectful and proactive team member. He worked well with others, maintained professionalism, and contributed to a positive work environment. He listened well, accepted suggestions openly, and carried a humble and helpful attitude.
 
-Rating: Delivers strong results
+def init_phi_model_cpu(model_dir):
+    if not os.path.isdir(model_dir):
+        raise FileNotFoundError(f"Model directory '{model_dir}' does not exist.")
+    device = torch.device("cpu")
+    tokenizer = AutoTokenizer.from_pretrained(model_dir, local_files_only=True, use_fast=True)
+    model = AutoModelForCausalLM.from_pretrained(model_dir, local_files_only=True)
+    model.eval()
+    model.to(device)
+    return tokenizer, model, device
 
-Explanation for your current decision:
-Prateek joined us for a short internship and is now returning to college to complete his studies. During this period, he has shown great promise in terms of technical ability, learning speed, and professionalism. He handled his tasks responsibly and built good working relationships with the team. If there’s an opportunity after his graduation, I would definitely recommend him for a full-time role. He has the right foundation and the right mindset to grow into a strong contributor.
 
+def generate_summary(tokenizer, model, device, prompt, max_new_tokens=GEN_MAX_TOKENS):
+    inputs = tokenizer(prompt, return_tensors="pt", truncation=True)
+    inputs = {k: v.to(device) for k, v in inputs.items()}
+    with torch.inference_mode():
+        output_ids = model.generate(
+            **inputs,
+            max_new_tokens=max_new_tokens,
+            do_sample=False,
+            eos_token_id=tokenizer.eos_token_id,
+        )
+    return tokenizer.decode(output_ids[0], skip_special_tokens=True).strip()
+
+
+def build_prompt(path, classification, content):
+    snippet = content[:MAX_PROMPT_CHARS]
+    prompt = (
+        "You are a senior deployment content analyst. "
+        f"The file at path '{path}' is classified as '{classification}'. "
+        "Provide a concise one-sentence description of its deployment purpose. "
+    )
+    if classification == "Stored Procedure":
+        prompt += "Mention that it is a stored procedure and what it does. "
+    elif classification == "View":
+        prompt += "Mention that it is a database view and its intent. "
+    elif classification == "Table Modification":
+        prompt += "Mention that it alters table schema and why. "
+    elif classification == "Data Processing":
+        prompt += "Describe the data pipeline or transformation role. "
+    elif classification == "Job Scheduling":
+        prompt += "Indicate the scheduling purpose or frequency if evident. "
+    elif classification == "Configuration":
+        prompt += "Summarize what the configuration governs. "
+    prompt += "\n\nContent:\n" + snippet
+    return prompt
+
+
+def collect_summaries(root_folder, tokenizer, model, device):
+    summaries = []
+    for dirpath, _, files in os.walk(root_folder):
+        for fname in files:
+            ext = os.path.splitext(fname)[1].lower()
+            if ext not in SUPPORTED_EXTENSIONS:
+                continue
+            full = os.path.join(dirpath, fname)
+            rel = os.path.relpath(full, root_folder).replace("\\", "/")
+            try:
+                with open(full, "r", encoding="utf-8", errors="ignore") as f:
+                    content = f.read()
+            except Exception as e:
+                summaries.append((rel, "Unknown", f"Could not read file: {e}"))
+                continue
+            if not content.strip():
+                summaries.append((rel, "Unknown", "File empty or unreadable."))
+                continue
+            classification = classify_file(rel, content)
+            prompt = build_prompt(rel, classification, content)
+            try:
+                out = generate_summary(tokenizer, model, device, prompt)
+                sentence = out.strip().splitlines()[0]
+                if not sentence.endswith("."):
+                    sentence = sentence.rstrip(".") + "."
+            except Exception as e:
+                sentence = f"Error generating summary: {e}"
+            summaries.append((rel, classification, sentence))
+    return summaries
+
+
+def build_report(folder, summaries):
+    db_counts = defaultdict(int)
+    components = defaultdict(list)
+    for path, classification, summary in summaries:
+        if classification in ("Stored Procedure", "View", "Table Modification"):
+            db_counts[classification] += 1
+            components[classification].append((path, summary))
+        elif classification == "Data Processing":
+            components["Data Processing"].append((path, summary))
+        elif classification == "Job Scheduling":
+            components["Job Scheduling"].append((path, summary))
+        elif classification == "Configuration":
+            components["Configuration"].append((path, summary))
+        else:
+            components["Other"].append((path, summary))
+
+    total_files = len(summaries)
+
+    overview_lines = []
+    db_parts = []
+    if db_counts.get("Stored Procedure"):
+        cnt = db_counts["Stored Procedure"]
+        db_parts.append(f"{cnt} stored procedure{'s' if cnt > 1 else ''}")
+    if db_counts.get("View"):
+        cnt = db_counts["View"]
+        db_parts.append(f"{cnt} view{'s' if cnt > 1 else ''}")
+    if db_counts.get("Table Modification"):
+        cnt = db_counts["Table Modification"]
+        db_parts.append(f"{cnt} table modification{'s' if cnt > 1 else ''}")
+    if db_parts:
+        overview_lines.append("Multiple database components are getting deployed: " + ", ".join(db_parts) + ".")
+    if components.get("Data Processing"):
+        cnt = len(components["Data Processing"])
+        overview_lines.append(f"Python components include {cnt} data processing script{'s' if cnt>1 else ''}.")
+    if components.get("Job Scheduling"):
+        cnt = len(components["Job Scheduling"])
+        overview_lines.append(f"Job scheduling includes {cnt} {'daily automated job' if cnt==1 else 'daily automated jobs'}.")
+    if components.get("Configuration"):
+        cnt = len(components["Configuration"])
+        overview_lines.append(f"Configuration includes {cnt} pipeline configuration file{'s' if cnt>1 else ''}.")
+    if not overview_lines:
+        overview_lines.append("No recognizable deployment components were detected.")
+
+    lines = []
+    lines.append("=" * 79)
+    lines.append("DEPLOYMENT CONTENT ANALYSIS SUMMARY")
+    lines.append("=" * 79)
+    lines.append("")
+    basename = os.path.basename(folder.rstrip(os.sep))
+    lines.append(f"Directory: {basename}")
+    lines.append(f"Total files analyzed: {total_files}")
+    lines.append("")
+    lines.append("DEPLOYMENT OVERVIEW:")
+    lines.append("----------------------------------------")
+    for ol in overview_lines:
+        lines.append(ol)
+    lines.append("")
+    lines.append("DETAILED COMPONENT ANALYSIS:")
+    lines.append("----------------------------------------")
+    lines.append("")
+
+    if any(k in components for k in ("Stored Procedure", "View", "Table Modification")):
+        lines.append("DATABASE COMPONENTS:")
+        if components.get("Stored Procedure"):
+            for i, (path, summary) in enumerate(components["Stored Procedure"], 1):
+                lines.append(f"SP {i}: {path}")
+                lines.append(f"  → {summary}")
+                lines.append("")
+        if components.get("View"):
+            for i, (path, summary) in enumerate(components["View"], 1):
+                lines.append(f"View {i}: {path}")
+                lines.append(f"  → {summary}")
+                lines.append("")
+        if components.get("Table Modification"):
+            for i, (path, summary) in enumerate(components["Table Modification"], 1):
+                lines.append(f"Table Mod {i}: {path}")
+                lines.append(f"  → {summary}")
+                lines.append("")
+    if components.get("Data Processing"):
+        lines.append("DATA PROCESSING:")
+        for i, (path, summary) in enumerate(components["Data Processing"], 1):
+            lines.append(f"Pipeline {i}: {path}")
+            lines.append(f"  → {summary}")
+            lines.append("")
+    if components.get("Job Scheduling"):
+        lines.append("JOB SCHEDULING:")
+        for i, (path, summary) in enumerate(components["Job Scheduling"], 1):
+            lines.append(f"Job {i}: {path}")
+            lines.append(f"  → {summary}")
+            lines.append("")
+    if components.get("Configuration"):
+        lines.append("CONFIGURATION:")
+        for i, (path, summary) in enumerate(components["Configuration"], 1):
+            lines.append(f"Config {i}: {path}")
+            lines.append(f"  → {summary}")
+            lines.append("")
+
+    return "\n".join(lines)
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Generate deployment content analysis summary in text.")
+    parser.add_argument("folder", type=str, help="Directory containing deployment package")
+    parser.add_argument("output", type=str, help="Output .txt file path")
+    parser.add_argument("--model-dir", type=str, default=DEFAULT_MODEL_DIR, help="Local Phi model directory")
+    args = parser.parse_args()
+
+    if not os.path.isdir(args.folder):
+        print(f"Folder does not exist: {args.folder}")
+        return
+
+    try:
+        tokenizer, model, device = init_phi_model_cpu(args.model_dir)
+    except Exception as e:
+        print(f"Failed to load model: {e}")
+        return
+
+    summaries = collect_summaries(args.folder, tokenizer, model, device)
+    report = build_report(args.folder, summaries)
+
+    with open(args.output, "w", encoding="utf-8") as f:
+        f.write(report)
+
+    print(f"Summary written to {args.output}")
+
+
+if __name__ == "__main__":
+    main()
